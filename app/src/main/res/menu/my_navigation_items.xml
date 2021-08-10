@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/Home"
+        android:title="Home"
+        android:icon="@mipmap/home"/>
+    <item android:id="@+id/Map"
+    android:title="Map"
+    android:icon="@mipmap/map"/>
+    <item android:id="@+id/Alarm"
+        android:title="Alarm"
+        android:icon="@mipmap/alarm"/>
+    <item android:id="@+id/Music"
+        android:title="Music"
+        android:icon="@mipmap/music"/>
+    <item android:id="@+id/Setting"
+        android:title="Setting"
+        android:icon="@mipmap/setting"/>
+</menu>

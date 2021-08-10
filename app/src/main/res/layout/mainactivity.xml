@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageheader"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:src="@drawable/header"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="80dp" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/imageheader"
+        android:background="@drawable/header_layout"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/imageheader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deep Awake"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
+
+    </LinearLayout>
+    <View
+        android:id="@+id/viewSupporter"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/imageheader"
+        android:layout_marginBottom="30dp"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/home_background"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewSupporter"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="-69dp">
+
+
+        <View
+            android:id="@+id/weather_cardView"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/weather_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/curr_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.087"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.061" />
+
+
+        <TextView
+            android:id="@+id/max_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/curr_temp"
+            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
+            app:layout_constraintHorizontal_bias="0.167"
+            app:layout_constraintStart_toStartOf="@+id/weather_cardView"
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
+            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
+            app:layout_constraintHorizontal_bias="0.539"
+            app:layout_constraintStart_toEndOf="@+id/curr_weather"
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
+            app:layout_constraintVertical_bias="0.752" />
+
+        <TextView
+            android:id="@+id/humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
+            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
+            app:layout_constraintHorizontal_bias="0.612"
+            app:layout_constraintStart_toStartOf="@+id/curr_weather"
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
+            app:layout_constraintVertical_bias="0.311" />
+
+        <TextView
+            android:id="@+id/curr_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
+            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
+            app:layout_constraintHorizontal_bias="0.365"
+            app:layout_constraintStart_toStartOf="@+id/min_temp"
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
+            app:layout_constraintVertical_bias="0.492" />
+
+        <TextView
+            android:id="@+id/min_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
+            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/max_temp"
+            app:layout_constraintTop_toBottomOf="@+id/max_temp"
+            app:layout_constraintVertical_bias="0.311" />
+
+        <TextView
+            android:id="@+id/longitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="longitude"
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.321"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="197dp" />
+
+        <TextView
+            android:id="@+id/latitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="laditude"
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.323"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="16dp" />
+
+<!--잠시 가져옴-->
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/layoutGraphView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+<!--            &lt;!&ndash; Status monitoring layout &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/layout_monitoring"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                >-->
+
+<!--                &lt;!&ndash; Tab menu &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:padding="5dip"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="right|top"-->
+<!--                    >-->
+<!--                </LinearLayout>-->
+
+<!--                &lt;!&ndash; Connection info &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/layout_conn"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:padding="5dip"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    >-->
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="@string/title_conn"-->
+<!--                        android:textColor="#ffffff"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textSize="14sp" />-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/text_conn"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:textColor="#ffffff"-->
+<!--                        android:textSize="12sp" />-->
+<!--                    <ImageView-->
+<!--                        android:layout_width="30dp"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:id="@+id/bt_dialog2"-->
+<!--                        android:background="@drawable/dialog_icon" />-->
+<!--                </LinearLayout>-->
+
+
+<!--                &lt;!&ndash; Rendering frequency &ndash;&gt;-->
+<!--                <TextView-->
+<!--                    android:id="@+id/text_title_render1"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:padding="5dip"-->
+<!--                    android:text="@string/title_freq"-->
+<!--                    android:textColor="#ffffff"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textSize="12sp" />-->
+<!--                <view class="com.example.semicolonapp.RenderingView"-->
+<!--                    android:id="@+id/layout_raw"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="500px"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:background="#ffffff" >-->
+<!--                </view>-->
+<!--                <TextView-->
+<!--                    android:id="@+id/text_freq_desc"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:padding="5dip"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textSize="10sp"-->
+<!--                    android:background="#ffffff" />-->
+
+
+<!--                &lt;!&ndash; Rendering analyzed value &ndash;&gt;-->
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:padding="5dip"-->
+<!--                    android:text="@string/title_value"-->
+<!--                    android:textColor="#ffffff"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textSize="12sp" />-->
+<!--                <view class="com.example.semicolonapp.RenderingView"-->
+<!--                    android:id="@+id/layout_value"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="250px"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:background="#ffffff" >-->
+<!--                </view>-->
+<!--                <TextView-->
+<!--                    android:id="@+id/text_value_desc"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:padding="5dip"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textSize="10sp"-->
+<!--                    android:background="#ffffff" />-->
+
+
+<!--                &lt;!&ndash;&lt;!&ndash; System info &ndash;&gt;&ndash;&gt;-->
+<!--                &lt;!&ndash;<LinearLayout&ndash;&gt;-->
+<!--                &lt;!&ndash;android:id="@+id/layout_system_info"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:padding="5dip"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:orientation="horizontal"&ndash;&gt;-->
+<!--                &lt;!&ndash;>&ndash;&gt;-->
+<!--                &lt;!&ndash;<TextView&ndash;&gt;-->
+<!--                &lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:text="@string/title_sys_info"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:textColor="#ffffff"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:textSize="12sp" />&ndash;&gt;-->
+<!--                &lt;!&ndash;<TextView&ndash;&gt;-->
+<!--                &lt;!&ndash;android:id="@+id/text_system"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:textColor="#ffffff"&ndash;&gt;-->
+<!--                &lt;!&ndash;android:textSize="12sp" />&ndash;&gt;-->
+<!--                &lt;!&ndash;</LinearLayout>&ndash;&gt;-->
+
+
+<!--            </LinearLayout>-->
+
+
+<!--            &lt;!&ndash; Controller layout &ndash;&gt;-->
+<!--            &lt;!&ndash; Status monitoring layout &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/layout_controller"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                >-->
+
+<!--                &lt;!&ndash; Tab menu &ndash;&gt;-->
+
+<!--                &lt;!&ndash; Control buttons &ndash;&gt;-->
+
+
+<!--                &lt;!&ndash; Connection info &ndash;&gt;-->
+<!--                <ScrollView-->
+<!--                    android:id="@+id/layout_logs"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent">-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/text_logs"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:textColor="#ffffff"-->
+<!--                        android:textSize="10sp"-->
+<!--                        />-->
+<!--                </ScrollView>-->
+
+
+<!--            </LinearLayout>-->
+
+<!--        </RelativeLayout>-->
+
+<!--잠시 가져옴-->
+
+        <LinearLayout
+            android:id="@+id/layout_monitoring"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/weather_cardView">
+            <!-- Connection info -->
+            <LinearLayout
+                android:background="@color/black"
+                android:id="@+id/layout_conn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dip"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_conn"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/text_conn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+            <!--연결 강도-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 연결 강도 :"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/text_conn_strength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_title_render1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/title_freq"
+                android:textColor="#ffffff"
+                android:background="@color/black"
+                android:textStyle="bold"
+                android:textSize="12dp" />
+
+            <view class="com.example.semicolonapp.RenderingView"
+                android:id="@+id/layout_raw"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="vertical"
+                android:background="@color/colorLayerSemiDark" >
+            </view>
+
+            <TextView
+                android:id="@+id/text_freq_desc"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:textSize="10dp"
+                android:background="@color/colorLayerSemiDark" />
+            <!-- Rendering analyzed value -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:text="@string/title_value"
+                android:background="@color/black"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="12dp" />
+
+<!--            <view class="com.example.semicolonapp.RenderingView"-->
+<!--                android:id="@+id/layout_value"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:orientation="vertical"-->
+<!--                android:background="@color/colorLayerSemiDark" >-->
+<!--            </view>-->
+            <view class="com.example.semicolonapp.RenderingView"
+                android:id="@+id/layout_value"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="vertical"
+                android:background="@color/colorLayerSemiDark" >
+            </view>
+            <TextView
+                android:id="@+id/text_value_desc"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:textSize="10dp"
+                android:background="@color/colorLayerSemiDark" />
+
+            <Button
+                android:id="@+id/sleep_check"
+                android:text="졸음 체크"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_logs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            tools:ignore="MissingConstraints" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/Home"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="25dp"
+            android:backgroundTint="@color/black"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@mipmap/home"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/Report"
+            android:layout_width="47dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toRightOf="@id/Home"
+            app:layout_constraintRight_toLeftOf="@id/Map"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@mipmap/report1"
+            tools:ignore="MissingConstraints" />
+
+
+        <ImageButton
+            android:id="@+id/Map"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="-1dp"
+            android:backgroundTint="@color/black"
+            app:layout_constraintLeft_toRightOf="@id/Report"
+            app:layout_constraintRight_toLeftOf="@id/Music"
+            app:srcCompat="@mipmap/map"
+            tools:ignore="MissingConstraints" />
+
+
+        <ImageButton
+            android:id="@+id/Music"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="1dp"
+            android:backgroundTint="@color/black"
+            app:layout_constraintLeft_toRightOf="@id/Map"
+            app:layout_constraintRight_toLeftOf="@id/Setting"
+            app:srcCompat="@mipmap/music"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/Setting"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="-1dp"
+            android:backgroundTint="@color/black"
+            app:layout_constraintRight_toRightOf="parent"
+            app:srcCompat="@mipmap/setting"
+            tools:ignore="MissingConstraints" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

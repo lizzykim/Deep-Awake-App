@@ -1,0 +1,90 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context=".ReportActivity"
+    android:background="@color/black">
+
+
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
+
+
+            <TextView
+                android:id="@+id/rp_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="김다영 님 운전 리포트"
+                android:textColor="#ffffff"
+                android:textSize="30dp"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true" />
+            <!--            <ImageView-->
+            <!--                android:layout_width="177dp"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:id="@+id/iv_frequentWeather"-->
+            <!--                android:src="@drawable/d01d"-->
+            <!--                android:layout_below="@+id/textView10" />-->
+
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:textAppearance="?android:attr/textAppearanceSmall"-->
+            <!--                android:text="기온"-->
+            <!--                android:textColor="#ffffff"-->
+            <!--                android:id="@+id/tv_frequentTemp"-->
+            <!--                android:layout_below="@+id/textView10"-->
+            <!--                android:layout_alignParentBottom="true"-->
+            <!--                android:layout_toRightOf="@+id/iv_frequentWeather" />-->
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_marginTop="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/rp_user_name"
+                 />
+            <!--android:layout_weight="0.32"-->
+        </RelativeLayout>
+
+<!--    <RelativeLayout-->
+<!--        android:id="@+id/layout_controller"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="600dp"-->
+<!--        android:layout_alignBottom="@id/layout_controller"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:orientation="vertical"-->
+<!--        android:weightSum="1">-->
+
+
+<!--        <ListView-->
+<!--            android:id="@+id/listView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_marginBottom="200dp" />-->
+<!--        &lt;!&ndash;android:layout_weight="0.32"&ndash;&gt; />-->
+
+<!--    </RelativeLayout>-->
+
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="GET API"-->
+<!--        android:id="@+id/bt_getAPI"-->
+<!--        android:layout_gravity="center_horizontal|bottom" />-->
+
+</RelativeLayout>

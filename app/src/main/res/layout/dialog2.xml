@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popup2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FirstFragment" > <!--해당 액티비티 선언-->
+    <LinearLayout
+
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="20sp"
+            android:textSize="20sp"
+            android:text="\n\n이 페이지는 당신의 현재 뇌파 상태를 종류별로 보여드립니다."
+            android:textStyle="bold"
+            android:typeface="normal"
+            android:textColor="#000000" />
+
+    </LinearLayout>
+
+
+</ScrollView>

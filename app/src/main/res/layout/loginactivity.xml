@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+    android:background="@color/black"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+<ImageView
+    android:layout_width="200dp"
+    android:layout_height="130dp"
+    android:layout_marginTop="150dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/background_splash"
+    android:layout_centerHorizontal="true"/>
+<!-- <TextView
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:textAppearance="?android:attr/textAppearanceLarge"
+     android:text="로고"
+     android:id="@+id/textView"
+     android:layout_centerHorizontal="true"
+     />
+-->
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/MindWake"
+    android:layout_marginBottom="20dp"
+    android:layout_gravity="center_horizontal"
+    android:layout_above="@+id/textView3"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    android:text="DeepAwake"
+    android:textColor="#FFFFFF"
+    android:textStyle="bold"
+    android:textSize="45dp"/>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="50dp"
+    android:layout_marginRight="50dp"
+    android:orientation="horizontal">
+    <AutoCompleteTextView
+        android:id="@+id/et_loginEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="17dp"
+        android:textSize="25dp"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:baselineAligned="true"
+        android:background="@drawable/login_back"
+        android:layout_toRightOf="@+id/textView4"
+        android:layout_toEndOf="@+id/textView4"/>
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="50dp"
+    android:layout_marginRight="50dp"
+    android:orientation="horizontal">
+    <EditText
+        android:id="@+id/et_loginPW"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="PW"
+        android:gravity="center"
+        android:layout_marginLeft="17dp"
+        android:background="@drawable/login_back"
+        android:textSize="25dp"
+        android:inputType="textPassword" />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:layout_marginLeft="50dp"
+    android:layout_marginRight="50dp"
+    android:orientation="horizontal"
+    android:gravity="center">
+    <Button
+        android:id="@+id/bt_login"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/login_back"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="로그인"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bt_newReg"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="가입"
+        android:background="@drawable/login_back"
+        android:textStyle="bold"/>
+</LinearLayout>
+    <ProgressBar
+        android:id="@+id/login_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+</LinearLayout>
