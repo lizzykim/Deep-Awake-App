@@ -17,17 +17,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ReportActivity"></activity>
-        <!-- Maps sdk for android api 키 설정 -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAs-USie-nVZ7o37UrOpxd18MAUcwLqa2c" />
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="feefb8e4372ffe114b0f7aa28978b946" />
-        <meta-data
-            android:name="com.kakao.sdk.kakaonavi.useWebView"
-            android:value="false" />
+        <activity android:name=".ReportDetailActivity">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity android:name=".ReportActivity" /> <!-- Maps sdk for android api 키 설정 -->
+<!--        <meta-data-->
+<!--            android:name="com.google.android.geo.API_KEY"-->
+<!--            android:value="AIzaSyAs-USie-nVZ7o37UrOpxd18MAUcwLqa2c" />-->
+<!--        <meta-data-->
+<!--            android:name="com.kakao.sdk.AppKey"-->
+<!--            android:value="feefb8e4372ffe114b0f7aa28978b946" />-->
+<!--        <meta-data-->
+<!--            android:name="com.kakao.sdk.kakaonavi.useWebView"-->
+<!--            android:value="false" />-->
 
         <activity android:name=".EegActivity" />
         <activity android:name=".LoginActivity" />
@@ -46,10 +52,20 @@
         <activity android:name=".SongActivity" />
         <activity android:name=".SplashActivity">
              <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+             <action android:name="android.intent.action.MAIN" />
+             <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAs-USie-nVZ7o37UrOpxd18MAUcwLqa2c" />
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="feefb8e4372ffe114b0f7aa28978b946" />
+        <meta-data
+            android:name="com.kakao.sdk.kakaonavi.useWebView"
+            android:value="false" />
+
     </application>
 
 </manifest>

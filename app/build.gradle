@@ -72,5 +72,8 @@ dependencies {
     //com.neurosky.thinkgear를 import 해줌, 뉴로 스카이 말고 다른 사람이 제공하느 뉴로스카이 소스
     implementation 'com.github.pwittchen:neurosky-android-sdk:0.0.2'
 
+    //cardview 사용
+    implementation "androidx.cardview:cardview:1.0.0"
+
 
 }

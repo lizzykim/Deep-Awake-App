@@ -1,6 +1,7 @@
 package com.example.semicolonapp.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.semicolonapp.R;
-import com.example.semicolonapp.data.ReportItem;
+import com.example.semicolonapp.data.ReportItemArrayData;
+import com.example.semicolonapp.data.ReportItemData;
 
 import java.util.ArrayList;
 
@@ -17,12 +19,12 @@ public class ReportAdapter extends BaseAdapter {
 
     public static final String TAG = "ReportAdapter";
     //adapter에 추가된 데이터를 저장하기 위한 ReportItem형의 arraylist
-    ArrayList<ReportItem> reportItems;
+    ArrayList<ReportItemData> reportItems;
     private Context context;
 
 
     //생성자
-    public ReportAdapter(Context context, ArrayList<ReportItem> data) {
+    public ReportAdapter(Context context, ArrayList<ReportItemData> data) {
         this.context = context;
         this.reportItems = data;
 
@@ -76,7 +78,10 @@ public class ReportAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        ReportItem report_item = reportItems.get(position);
+        ReportItemData report_item = reportItems.get(position);
+
+
+        Log.i(TAG, "reportadapter의 현재시간:" +report_item.getDatentime());
 
         holder.tv_temperature.setText(report_item.getTemperature()); //온도
         holder.tv_datentime.setText(report_item.getDatentime()); //날짜
@@ -88,10 +93,19 @@ public class ReportAdapter extends BaseAdapter {
 
 
     //ReportITem의 배열에 데이터 추가(지정) reportActivity에서서
-    public void setData(ArrayList<ReportItem> data){
+    public void setData(ArrayList<ReportItemData> data){
         for ( int i=0 ;i <data.size(); i++){
-            ReportItem rp_item = data.get(i);
+            ReportItemData rp_item = data.get(i);
             this.reportItems.add(rp_item); //reportItems 에 운전관련 데이터를 저장해주는 것
         }
     }
+
+
+
+//    public void setData(ArrayList<ReportItemArrayData> data){
+//        for ( int i=0 ;i <data.size(); i++){
+//            ReportItemArrayData rp_item = data.get(i);
+//            this.reportItemsData.add(rp_item); //reportItems 에 운전관련 데이터를 저장해주는 것
+//        }
+//    }
 }

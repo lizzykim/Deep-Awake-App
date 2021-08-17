@@ -1,14 +1,37 @@
 package com.example.semicolonapp.data;
 
-public class ReportItem {
+import com.google.gson.annotations.SerializedName;
 
+public class ReportItemData {
+
+    @SerializedName("lat")
     public String lat;
+
+    @SerializedName("lon")
     public String lon;
+
+    @SerializedName("datentime")
     public String datentime;
+
+    @SerializedName("location")
     public String location;
+
+    @SerializedName("weather")
     public String weather;
+
+    @SerializedName("temperature")
     public String temperature;
+
+    @SerializedName("humidity")
     public String humidity;
+
+    @SerializedName("code")
+    public int code;
+
+    @SerializedName("message")
+    public String message;
+
+
 //    public String city;
 //    public String fullName;
 //    public int airmise;
@@ -18,14 +41,20 @@ public class ReportItem {
 //    public int airo3;
 //    public int airco;
 
-//    public ReportItem( String datentime, String location) {
-//        this.datentime = datentime;
-//        this.location = location;
-//    }
 
 
+    public ReportItemData( String datentime, String location,String temperature) {
+        this.datentime = datentime;
+        this.location = location;
+        this.temperature = temperature;
+    }
 
-    public ReportItem(String lat, String lon, String datentime, String location, String weather, String temperature ,String humidity) {
+    public ReportItemData() {
+
+    }
+
+
+    public ReportItemData(String lat, String lon, String datentime, String location, String weather, String temperature , String humidity) {
         this.lat = lat;
         this.lon = lon;
         this.datentime = datentime;
@@ -54,7 +83,7 @@ public class ReportItem {
 
     @Override
     public String toString() {
-        return "APIItem{" +
+        return "recorditem={" +
                 "lat='" + lat + '\'' +
                 ", lon='" + lon + '\'' +
                 ", datentime='" + datentime + '\'' +
@@ -185,4 +214,30 @@ public class ReportItem {
 //    public void setAirco(int airco) {
 //        this.airco = airco;
 //    }
+
+
+    public String getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(String humidity) {
+        this.humidity = humidity;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

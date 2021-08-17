@@ -1,41 +1,26 @@
 package com.example.semicolonapp;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.example.semicolonapp.adapter.ReportAdapter;
 import com.example.semicolonapp.brain.Analyzer;
@@ -45,7 +30,8 @@ import com.example.semicolonapp.brain.SerialConnector;
 import com.example.semicolonapp.brain.SignalHolder;
 import com.example.semicolonapp.data.DataHolder;
 import com.example.semicolonapp.data.GetNameResponse;
-import com.example.semicolonapp.data.ReportItem;
+import com.example.semicolonapp.data.ReportItemData;
+import com.example.semicolonapp.data.ReportItemResponse;
 import com.example.semicolonapp.data.weatherData;
 import com.example.semicolonapp.network.GpsInfo;
 import com.example.semicolonapp.network.RetrofitClient;
@@ -167,9 +153,9 @@ import retrofit2.Response;
     String current_humidity="";
 
     //adapter에 추가된 데이터를 저장하기 위한 ReportItem형의 arraylist
-    ArrayList<ReportItem> reportItems = new ArrayList<ReportItem>();
-    ReportAdapter adapter = new ReportAdapter(this,reportItems);
-
+    ArrayList<ReportItemData> reportItems = new ArrayList<ReportItemData>();
+    ReportAdapter adapter;
+   // ReportAdapter adapter = new ReportAdapter(this,reportItems);
 
 
 
@@ -278,18 +264,24 @@ import retrofit2.Response;
 
                         //d)현재 경위도로  온도, 날씨 불러오기(에러 : 버튼 처음 눌렀을때는 날씨, 습도, 온도가 불러와지지 않음) ->oncreate일때, weatherThread를 실행하면 해결완료
                         //oncreate일때, weatherThread를 실행-> onclick했을때의 현재 날씨, 습도, 온도가 current_weather,current_humidity,current_temp가 저장됨
-
                         Log.i("Capture","캡쳐 날씨: " + current_weather);
                         Log.i("Capture","캡쳐 습도: " +  current_humidity);
                         Log.i("Capture","캡쳐 온도: " + current_temp);
 
                         Toast.makeText(MainActivity.this, "졸음 시점 환경 데이터:  경도=" + current_lati_string +" 위도=" + current_longi_string + " 위치="+current_address +" 시간="+current_time+" 날씨="+current_weather +" 온도="+current_temp+" 습도="+current_humidity,Toast.LENGTH_SHORT).show();
+                        Log.i("reportitems",reportItems.toString());
 
                         //@@@@@step2. ReportItem 에 갭쳐 정도들 넘겨주기 getter 이용?
-                        reportItems.add(new ReportItem(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
-                        //reportItems.add(new ReportItem(current_time,current_address));
+//                        reportItems.add(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
+//                        adapter = new ReportAdapter(MainActivity.this,reportItems);
 
-                        Log.i("reportitems",reportItems.toString());
+                        //@@@@@step3. 현재 정보들 mysql driverrecord 테이블에 저장
+                        putdriverrecord(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
+
+
+
+
+
 
                         break;
 
@@ -308,17 +300,17 @@ import retrofit2.Response;
 
         /////@@@주의! mainactivity 에서 시작한다면  밑에 end까지는 주석 처리하고 돌려볼것!
         //메인 화면 들어올때 username SQL,RETROFIT2 으로 받아오는 코드//
-//        service = RetrofitClient.getClient().create(ServiceApi.class);
-//
-//        if(DataHolder.getUseremail() == null){
-//            Intent intent = getIntent(); //로그인 유저의 이메일 가져오기(로그인에서!)
-//            useremail = intent.getExtras().getString("useremail");
-//            DataHolder.setUseremail(useremail);
-//            Log.i("useremail", useremail);
-//            showUserName(useremail); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
-//        }
-//        showUserName(DataHolder.getUseremail()); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
-//        //end
+        service = RetrofitClient.getClient().create(ServiceApi.class);
+
+        if(DataHolder.getUseremail() == null){
+            Intent intent = getIntent(); //로그인 유저의 이메일 가져오기(로그인에서!)
+            useremail = intent.getExtras().getString("useremail");
+            DataHolder.setUseremail(useremail);
+            Log.i("useremail", useremail);
+            showUserName(useremail); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
+        }
+        showUserName(DataHolder.getUseremail()); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
+        //end
 
         //현재 날씨 캡쳐하는 스레드
         weatherThread thread = new weatherThread();
@@ -374,6 +366,25 @@ import retrofit2.Response;
         //----- Initialize processing core
         initialize(); //뇌파 핵심 코드
 
+    }
+
+    //졸음 현재 캡쳐 데이터 nodejs.express로 mysql에 저장하는 메소드
+    private void putdriverrecord(ReportItemData data) {
+        service.postReportRecord(data).enqueue(new Callback<ReportItemResponse>() {
+            @Override
+            public void onResponse(Call<ReportItemResponse> call, Response<ReportItemResponse> response) {
+                ReportItemResponse result = response.body();
+                Toast.makeText(MainActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(Call<ReportItemResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "운전 레코드를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                Log.e("운전레코드 삽입 에러 발생", t.getMessage());
+                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
+            }
+        });
     }
 
     //private String getCurrentWeather(double current_lati, double current_longi) {
