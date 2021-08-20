@@ -29,7 +29,11 @@ import com.example.semicolonapp.brain.SerialCommand;
 import com.example.semicolonapp.brain.SerialConnector;
 import com.example.semicolonapp.brain.SignalHolder;
 import com.example.semicolonapp.data.DataHolder;
+import com.example.semicolonapp.data.EEGTrainResponse;
+import com.example.semicolonapp.data.EEGdata;
 import com.example.semicolonapp.data.GetNameResponse;
+import com.example.semicolonapp.data.RAWTrainResponse;
+import com.example.semicolonapp.data.RAWdata;
 import com.example.semicolonapp.data.ReportItemData;
 import com.example.semicolonapp.data.ReportItemResponse;
 import com.example.semicolonapp.data.weatherData;
@@ -39,6 +43,7 @@ import com.example.semicolonapp.network.ServiceApi;
 import com.google.android.gms.maps.model.LatLng;
 import com.neurosky.thinkgear.TGDevice;
 import com.neurosky.thinkgear.TGEegPower;
+import com.neurosky.thinkgear.TGRawMulti;
 
 import org.json.JSONObject;
 
@@ -85,7 +90,9 @@ import retrofit2.Response;
     private int[] mSignalBuffer = new int[3];
     private int mEEGRawBufferIndex = 0;
 
-    final boolean rawEnabled = false;
+    //final boolean rawEnabled = false;
+    private final boolean rawEnabled = true; //Shows raw data in textViewRawData
+
     private boolean mSendMindSignal = false;
 
     // Serial control
@@ -190,7 +197,7 @@ import retrofit2.Response;
         mTextSerial = (TextView)findViewById(R.id.text_logs);
         sleepcheck_btn = (Button)findViewById(R.id.sleep_check); //졸음 체크 참조
 
-
+        service = RetrofitClient.getClient().create(ServiceApi.class); //RETROFIT 객체
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -279,10 +286,6 @@ import retrofit2.Response;
                         putdriverrecord(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
 
 
-
-
-
-
                         break;
 
                 }
@@ -300,17 +303,15 @@ import retrofit2.Response;
 
         /////@@@주의! mainactivity 에서 시작한다면  밑에 end까지는 주석 처리하고 돌려볼것!
         //메인 화면 들어올때 username SQL,RETROFIT2 으로 받아오는 코드//
-        service = RetrofitClient.getClient().create(ServiceApi.class);
-
-        if(DataHolder.getUseremail() == null){
-            Intent intent = getIntent(); //로그인 유저의 이메일 가져오기(로그인에서!)
-            useremail = intent.getExtras().getString("useremail");
-            DataHolder.setUseremail(useremail);
-            Log.i("useremail", useremail);
-            showUserName(useremail); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
-        }
-        showUserName(DataHolder.getUseremail()); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
-        //end
+//        if(DataHolder.getUseremail() == null){
+//            Intent intent = getIntent(); //로그인 유저의 이메일 가져오기(로그인에서!)
+//            useremail = intent.getExtras().getString("useremail");
+//            DataHolder.setUseremail(useremail);
+//            Log.i("useremail", useremail);
+//            showUserName(useremail); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
+//        }
+//        showUserName(DataHolder.getUseremail()); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
+//        //end
 
         //현재 날씨 캡쳐하는 스레드
         weatherThread thread = new weatherThread();
@@ -516,7 +517,8 @@ import retrofit2.Response;
     private void setupBT() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //블루투스 지원 유뮤 확인
-        if(bluetoothAdapter ==null){
+        //if(bluetoothAdapter ==null){
+        if(bluetoothAdapter ==null & !bluetoothAdapter.isEnabled()){
             Toast.makeText(this, "블루투스 지원 안함", Toast.LENGTH_SHORT).show();
             finish(); //왜 쓰는 거지?
             return; //return 안하면 else문으로 넘어감
@@ -625,16 +627,33 @@ import retrofit2.Response;
 
                 // TGDevice.MSG_RAW_DATA is Deprecated....
                 case TGDevice.MSG_RAW_DATA:
-//                    Log.d(TAG, "state:MSG_RAW_DATA");
-//                     Log.d(TAG, "Got raw: " + msg.arg1 + "\n");
-//	            	if(mEEGRawBufferIndex < Constants.EEG_RAW_DATA_LEN) { //인덱스가 512보다 작으면
-//	            		mEEGRawBuffer[mEEGRawBufferIndex] = msg.arg1; //512 배열의 현재 인덱스에 msg 입력
-//	            		mEEGRawBufferIndex++;
-//	            	}
-                    break;
+                    if (rawEnabled) {
+                        //updateRawData(message.arg1);
+                        Log.w(TAG, "MSG_RAW_DATA: " + msg.arg1);
 
+                        ///////RAWdata 객체 만들어서 서버에 넘겨주기////
+//                        RAWdata raWdata = new RAWdata();
+//                        raWdata.setRaw(String.valueOf(msg.arg1));
+//                        postRawData(raWdata);
+                        /////////
+                        
+                    }
+
+                    break;
+                case TGDevice.MSG_RAW_MULTI:
+                        TGRawMulti tgRawMulti = (TGRawMulti) msg.obj;
+                        Log.i(TAG, "Raw channel 1: " + tgRawMulti.ch1);
+                        Log.i(TAG, "Raw channel 2: " + tgRawMulti.ch2);
+                        Log.i(TAG, "Raw channel 3: " + tgRawMulti.ch3);
+                        Log.i(TAG, "Raw channel 4: " + tgRawMulti.ch4);
+                        Log.i(TAG, "Raw channel 5: " + tgRawMulti.ch5);
+                        Log.i(TAG, "Raw channel 6: " + tgRawMulti.ch6);
+                        Log.i(TAG, "Raw channel 7: " + tgRawMulti.ch7);
+                        Log.i(TAG, "Raw channel 8: " + tgRawMulti.ch8);
+
+                    break;
                 case TGDevice.MSG_EEG_POWER:
-                    Log.d(TAG, "state:MSG_EEG_POWER");
+                    //Log.d(TAG, "state:MSG_EEG_POWER");
                     TGEegPower ep =(TGEegPower)msg.obj;
                     TGEegPower ep_normalized = new TGEegPower();
                     if(ep!=null) {
@@ -704,7 +723,7 @@ import retrofit2.Response;
                             hb300[halahblbHeadIndex300] = ep_normalized.highBeta;
                             lb300[halahblbHeadIndex300] = ep_normalized.lowBeta;
                             halahblbHeadIndex300++;
-                            Log.v(TAG, "30초이상, 330초 미만이라 데이터를 쌓기만 하는중..");
+                            //Log.v(TAG, "30초이상, 330초 미만이라 데이터를 쌓기만 하는중..");
                         } else if (timeLeft == 330) {//330초 때기준점을 잡는다(16000000이하의 수치가 몇회인지 기준점)
                             int toStdTempBindoHa = 0;
                             int toStdTempBindoLa = 0;
@@ -726,41 +745,41 @@ import retrofit2.Response;
                                 }
                             }//for
                             standard_ha = toStdTempBindoHa;
-                            Log.v(TAG, "standard_ha:" + standard_ha);
+                            //Log.v(TAG, "standard_ha:" + standard_ha);
                             standard_la = toStdTempBindoLa;
-                            Log.v(TAG, "standard_la:" + standard_la);
+                            //Log.v(TAG, "standard_la:" + standard_la);
                             standard_hb = toStdTempBindoHb;
-                            Log.v(TAG, "standard_hb:" + standard_hb);
+                            //Log.v(TAG, "standard_hb:" + standard_hb);
                             standard_lb = toStdTempBindoLb;
-                            Log.v(TAG, "standard_lb:" + standard_lb);
-                            Log.v(TAG, "330초가 되어 standard값을 구하였습니다!");
+                            //Log.v(TAG, "standard_lb:" + standard_lb);
+                            //Log.v(TAG, "330초가 되어 standard값을 구하였습니다!");
                         } else if (timeLeft > 330) {  //330초 이후 졸음여부 측정
                             //30초이후에는 항상 이곳에 들어옴
                             if (wait30 == true) {//인덱스30이전으로수정, 데이터 쌓기만 하고 졸음검사는 안함
                                 wait30Now++;//처음여기들어오면 1초부터 시작
-                                Log.v(TAG, "wait30==true들어옴, wait30Now:" + wait30Now);
+                                //Log.v(TAG, "wait30==true들어옴, wait30Now:" + wait30Now);
                                 if (wait30Now == 1 && halahblbHeadIndex300 - 30 < 0) {//졸음이왔을때(wait30Now==1) 인덱스-30이음수이면 인덱스를30이전으로 하되 음수가 안되게 수정
                                     //halahblbHeadIndex300=halahblbHeadIndex300+299-29;
                                     halahblbHeadIndex300 = halahblbHeadIndex300 + 270;
-                                    Log.v(TAG, "알람이울렸을 때의 인덱스-30이 음수여서 인덱스값조정. 인덱스:" + halahblbHeadIndex300);
+                                    //Log.v(TAG, "알람이울렸을 때의 인덱스-30이 음수여서 인덱스값조정. 인덱스:" + halahblbHeadIndex300);
                                 } else if (wait30Now == 1 && halahblbHeadIndex300 - 30 >= 0) {//졸음이 왔을 때(wait30Now==1)인덱스를 30이전으로 해주기
                                     halahblbHeadIndex300 -= 30;
-                                    Log.v(TAG, "알람이울렸을 때의 인덱스-30이 양수임. 인덱스값조정. 인덱스:" + halahblbHeadIndex300);
+                                    //Log.v(TAG, "알람이울렸을 때의 인덱스-30이 양수임. 인덱스값조정. 인덱스:" + halahblbHeadIndex300);
                                 }
                                 if (wait30Now == 31) {
                                     wait30 = false;
-                                    Log.v(TAG, "알람울리고30초 기다리는거 끝남");
+                                    //Log.v(TAG, "알람울리고30초 기다리는거 끝남");
                                 }
                             }//if(wait30==true)
                             if (halahblbHeadIndex300 == 300) {//다시 배열의 처음부터 채움
                                 halahblbHeadIndex300 = 0;
-                                Log.v(TAG, "300칸이 다 찼기에 다시 0번째 칸부터 시작!");
+                                //Log.v(TAG, "300칸이 다 찼기에 다시 0번째 칸부터 시작!");
                             }
                             ha300[halahblbHeadIndex300] = ep_normalized.highAlpha;
                             la300[halahblbHeadIndex300] = ep_normalized.lowAlpha;
                             hb300[halahblbHeadIndex300] = ep_normalized.highBeta;
                             lb300[halahblbHeadIndex300] = ep_normalized.lowBeta;
-                            Log.v(TAG, "[현재 넣은 halahblbHEadIndex300]:" + halahblbHeadIndex300);
+                            //Log.v(TAG, "[현재 넣은 halahblbHEadIndex300]:" + halahblbHeadIndex300);
                             halahblbHeadIndex300++;
                             //------------------------
                             /*if(timeLeft==380){
@@ -789,9 +808,9 @@ import retrofit2.Response;
                                         tempBindoLb++;
                                     }
                                 }//for
-                                Log.v(TAG, "졸음여부 측정하고 있습니다(wait30==false) standatd_ha*0.5738:" + standard_ha * 0.5738 + "tempbindoha:" + tempBindoHa);
-                                Log.v(TAG, "std_la*0.55:" + standard_la * 0.55 + ",tempBindoLa" + tempBindoLa + "|std_hb*0.2959:" + standard_hb * 0.2959 + ",tempBindoHb: " + tempBindoHb);
-                                Log.v(TAG, "|std_lb*0.3905:" + standard_lb * 0.3905 + "tempBindoLb:" + tempBindoLb);
+                                //Log.v(TAG, "졸음여부 측정하고 있습니다(wait30==false) standatd_ha*0.5738:" + standard_ha * 0.5738 + "tempbindoha:" + tempBindoHa);
+                                //Log.v(TAG, "std_la*0.55:" + standard_la * 0.55 + ",tempBindoLa" + tempBindoLa + "|std_hb*0.2959:" + standard_hb * 0.2959 + ",tempBindoHb: " + tempBindoHb);
+                                //Log.v(TAG, "|std_lb*0.3905:" + standard_lb * 0.3905 + "tempBindoLb:" + tempBindoLb);
                                 //Log.v(TAG,"player playing?"+String.valueOf(player.isPlaying()));
 
 //                                if ((player.isPlaying() == false) && ((standard_ha * 0.5738 > tempBindoHa) || (standard_la * 0.55 > tempBindoLa) || (standard_hb * 0.2959 > tempBindoHb) || (standard_lb * 0.3905 > tempBindoLb))) {
@@ -824,13 +843,16 @@ import retrofit2.Response;
                             }
                         }
 
+                        //전자 뇌파 EEG 학습용 데이터 SERVER에 전달
+                        //postEEGData(new EEGdata(ep.delta,ep.theta,ep.lowAlpha,ep.highAlpha,ep.lowBeta,ep.highBeta,ep.lowGamma,ep.midGamma));
+                        
                         String tag="RAW Brain Waves";
                         Log.d(tag, "MSG_EEG_POWER: " + ep.delta + ", " + ep.theta  + ", " + ep.lowAlpha  + ", " + ep.highAlpha  + ", " + ep.lowBeta  + ", " + ep.highBeta + ", " + ep.lowGamma + ", " + ep.midGamma);
                         break;
 
                 // Additional data (Poor signal, Heart rate)
                 case TGDevice.MSG_POOR_SIGNAL:
-                    Log.d(TAG, "state:MSG_POOR_SIGNAL");
+                    //Log.d(TAG, "state:MSG_POOR_SIGNAL");
 
 //                    mSignalHolder.setPoorSignal(msg.arg1);
 //
@@ -846,10 +868,10 @@ import retrofit2.Response;
                     if(msg.arg1 >0){
 
                         float val = msg.arg1;
-//                        val -= 25;
-//                        val /= 175;
-//                        val = 1.0f - val;
-//                        val *= 100.0f;
+                        val -= 25;
+                        val /= 175;
+                        val = 1.0f - val;
+                        val *= 100.0f;
                         mTextConnStrength.setText(String.valueOf((int)val));
                         Log.w(TAG, "Poor signal: " + msg.arg1);
                         Log.i(TAG, "connection strength: " +  val);
@@ -857,7 +879,7 @@ import retrofit2.Response;
 
                     break;
                 case TGDevice.MSG_HEART_RATE:
-                    Log.d(TAG, "state:MSG_HEART_RATE");
+                    //Log.d(TAG, "state:MSG_HEART_RATE");
                     mSignalHolder.setHeartRate(msg.arg1);
 
                     if (mCurrentViewMode == Constants.VIEW_MODE_MONITORING) {
@@ -868,7 +890,7 @@ import retrofit2.Response;
                     break;
                 // Pre-processed data
                 case TGDevice.MSG_ATTENTION:
-                    Log.d(TAG, "state:MSG_ATTENTION");
+                    //Log.d(TAG, "state:MSG_ATTENTION");
                     mSignalHolder.setAttention(msg.arg1);
 
                     if (mCurrentViewMode == Constants.VIEW_MODE_MONITORING) {
@@ -882,7 +904,7 @@ import retrofit2.Response;
                     break;
 
                 case TGDevice.MSG_MEDITATION:
-                    Log.d(TAG, "state:MSG_MEDITATION");
+                    //Log.d(TAG, "state:MSG_MEDITATION");
                     mSignalHolder.setMeditation(msg.arg1);
 
                     if (mCurrentViewMode == Constants.VIEW_MODE_MONITORING) {
@@ -896,7 +918,7 @@ import retrofit2.Response;
                     break;
 
                 case TGDevice.MSG_BLINK:
-                    Log.d(TAG, "state:MSG_BLINK");
+                    //Log.d(TAG, "state:MSG_BLINK");
                     mSignalHolder.setBlink(msg.arg1);
                     if (mCurrentViewMode == Constants.VIEW_MODE_MONITORING) {
                         mRenderValue.drawValueGraph(0, 0, msg.arg1, 0, 0);
@@ -981,6 +1003,60 @@ import retrofit2.Response;
             } // End of switch()
         }// End of handleMessage()
     };
+
+    //운전자 뇌파 학습용 데이터 서버에 전달(EEG)
+//    private void postEEGData(EEGdata data) {
+//        service.post_EEG_train(data).enqueue(new Callback<EEGTrainResponse>() {
+//            @Override
+//            public void onResponse(Call<EEGTrainResponse> call, Response<EEGTrainResponse> response) {
+//                EEGTrainResponse result = response.body();
+//                Toast.makeText(MainActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<EEGTrainResponse> call, Throwable t) {
+//                Toast.makeText(MainActivity.this, "운전자 EEG 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
+//                Log.e("운전자 EEG 데이터 삽입 에러 발생", t.getMessage());
+//                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
+//            }
+//        });
+//    }
+
+    ///운전자 뇌파 학습용 데이터 서버에 전달(RAW)
+//    private void postRawData(String data) {
+//        service.post_RAW_train(data).enqueue(new Callback<RAWTrainResponse>() {
+//            @Override
+//            public void onResponse(Call<RAWTrainResponse> call, Response<RAWTrainResponse> response) {
+//                RAWTrainResponse result = response.body();
+//                Toast.makeText(MainActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RAWTrainResponse> call, Throwable t) {
+//                Toast.makeText(MainActivity.this, "운전자 RAW 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
+//                Log.e("운전자 RAW 데이터 삽입 에러 발생", t.getMessage());
+//                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
+//            }
+//        });
+//    }
+
+    private void postRawData(RAWdata data){
+        service.post_RAW_train(data).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Toast.makeText(MainActivity.this, "운전자 RAW 데이터 삽입 성공", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "운전자 RAW 데이터 삽입 성공");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "운전자 RAW 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                Log.e("운전자 RAW 데이터 삽입 에러 발생", t.getMessage());
+                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
+            }
+        });
+    }
+
 
 
 

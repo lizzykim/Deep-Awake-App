@@ -70,8 +70,14 @@ public class ReportActivity extends AppCompatActivity {
                 Toast.makeText(ReportActivity.this ,ItemsArrays.get(position).getDatentime(),Toast.LENGTH_SHORT).show();//날자로 toast띄우기
                 Intent intent = new Intent(ReportActivity.this,ReportDetailActivity.class);
                 //날짜,주소,날씨,온도,위경도 다 같이 넘겨주기
-
-
+                intent.putExtra("date",ItemsArrays.get(position).getDatentime());
+                intent.putExtra("address",ItemsArrays.get(position).getLocation());
+                intent.putExtra("weather",ItemsArrays.get(position).getWeather());
+                intent.putExtra("temperature",ItemsArrays.get(position).getTemperature());
+                intent.putExtra("humidity",ItemsArrays.get(position).getHumidity());
+                intent.putExtra("lat",ItemsArrays.get(position).getLat());
+                intent.putExtra("long",ItemsArrays.get(position).getLon());
+                //intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });

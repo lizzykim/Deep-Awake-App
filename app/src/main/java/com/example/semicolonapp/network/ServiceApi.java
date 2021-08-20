@@ -1,8 +1,12 @@
 package com.example.semicolonapp.network;
 
+import com.example.semicolonapp.data.EEGTrainResponse;
+import com.example.semicolonapp.data.EEGdata;
 import com.example.semicolonapp.data.GetNameResponse;
 import com.example.semicolonapp.data.LoginData;
 import com.example.semicolonapp.data.LoginResponse;
+import com.example.semicolonapp.data.RAWTrainResponse;
+import com.example.semicolonapp.data.RAWdata;
 import com.example.semicolonapp.data.RegisterData;
 import com.example.semicolonapp.data.RegisterResponse;
 import com.example.semicolonapp.data.ReportItemArrayData;
@@ -31,5 +35,14 @@ public interface ServiceApi {
 
     @GET("/user/reportrecord") //운전자 운전레코드 가져와서 listview로 뿌려주는 것
     Call<ReportItemArrayData> getReportRecord();
+
+    @POST("/user/eeg/train_raw") //운전자 뇌파 학습용 데이터 서버에 전달(임시 => nodejs/ 추후 aws 람다)
+    //Call<RAWTrainResponse> post_RAW_train(@Body String data);
+    //Call<Void> post_RAW_train(@Body String data);
+    Call<Void> post_RAW_train(@Body RAWdata data);
+
+//    @POST("/user/eeg/train_eeg") //운전자 뇌파 학습용 데이터 서버에 전달(임시 => nodejs/ 추후 aws 람다)
+//    Call<EEGTrainResponse> post_EEG_train(@Body EEGdata data);
+
 
 }
