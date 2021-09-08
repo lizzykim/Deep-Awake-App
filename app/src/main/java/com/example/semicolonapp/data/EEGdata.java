@@ -29,7 +29,8 @@ public class EEGdata {
     @SerializedName("EEG_midGamma")
     public int eeg_midGamma;
 
-
+    public EEGdata() {
+    }
 
     public EEGdata(int eeg_delta, int eeg_theta, int eeg_lowAlpha, int eeg_highAlpha, int eeg_lowBeta, int eeg_highBeta, int eeg_lowGamma, int eeg_midGamma) {
         this.eeg_delta = eeg_delta;

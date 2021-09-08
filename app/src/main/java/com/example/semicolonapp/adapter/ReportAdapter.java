@@ -83,7 +83,7 @@ public class ReportAdapter extends BaseAdapter {
 
         Log.i(TAG, "reportadapter의 현재시간:" +report_item.getDatentime());
 
-        holder.tv_temperature.setText(report_item.getTemperature()); //온도
+        holder.tv_temperature.setText(report_item.getTemperature()+"ºC"); //온도
         holder.tv_datentime.setText(report_item.getDatentime()); //날짜
         holder.tv_fullName.setText(report_item.getLocation()); //지역이름
         //convertView.setOnClickListener();

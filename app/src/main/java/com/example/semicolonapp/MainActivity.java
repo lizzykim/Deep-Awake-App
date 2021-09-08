@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.semicolonapp.adapter.ReportAdapter;
@@ -28,11 +29,11 @@ import com.example.semicolonapp.brain.Constants;
 import com.example.semicolonapp.brain.SerialCommand;
 import com.example.semicolonapp.brain.SerialConnector;
 import com.example.semicolonapp.brain.SignalHolder;
+import com.example.semicolonapp.data.Attentiondata;
 import com.example.semicolonapp.data.DataHolder;
-import com.example.semicolonapp.data.EEGTrainResponse;
 import com.example.semicolonapp.data.EEGdata;
 import com.example.semicolonapp.data.GetNameResponse;
-import com.example.semicolonapp.data.RAWTrainResponse;
+import com.example.semicolonapp.data.Meditationdata;
 import com.example.semicolonapp.data.RAWdata;
 import com.example.semicolonapp.data.ReportItemData;
 import com.example.semicolonapp.data.ReportItemResponse;
@@ -48,9 +49,11 @@ import com.neurosky.thinkgear.TGRawMulti;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -70,6 +73,12 @@ import retrofit2.Response;
     public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
+    ////람다
+    private String mURL = "https://0nmhkvy9nf.execute-api.ap-northeast-2.amazonaws.com/semicolon";
+    private String connMethod ="POST";
+    private String bodyJson;
+    private static final int LOAD_SUCCESS=101;
 
 
     private ServiceApi service;//retrofit 관련
@@ -158,6 +167,11 @@ import retrofit2.Response;
     String current_weather ="";
     String current_temp="";
     String current_humidity="";
+
+    //공기
+    String sidoname="";
+
+
 
     //adapter에 추가된 데이터를 저장하기 위한 ReportItem형의 arraylist
     ArrayList<ReportItemData> reportItems = new ArrayList<ReportItemData>();
@@ -265,8 +279,9 @@ import retrofit2.Response;
                         //c)현재 날짜 불러오기
                         Long now = System.currentTimeMillis();
                         Date mDate = new Date(now);
-                        SimpleDateFormat simpledate = new SimpleDateFormat("MM-dd hh:mm:ss");
+                        SimpleDateFormat simpledate = new SimpleDateFormat("MM월 dd일 HH:mm:ss");
                         current_time = simpledate.format(mDate);
+
                         Log.i("Capture","캡쳐 시간:" + current_time);
 
                         //d)현재 경위도로  온도, 날씨 불러오기(에러 : 버튼 처음 눌렀을때는 날씨, 습도, 온도가 불러와지지 않음) ->oncreate일때, weatherThread를 실행하면 해결완료
@@ -278,11 +293,8 @@ import retrofit2.Response;
                         Toast.makeText(MainActivity.this, "졸음 시점 환경 데이터:  경도=" + current_lati_string +" 위도=" + current_longi_string + " 위치="+current_address +" 시간="+current_time+" 날씨="+current_weather +" 온도="+current_temp+" 습도="+current_humidity,Toast.LENGTH_SHORT).show();
                         Log.i("reportitems",reportItems.toString());
 
-                        //@@@@@step2. ReportItem 에 갭쳐 정도들 넘겨주기 getter 이용?
-//                        reportItems.add(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
-//                        adapter = new ReportAdapter(MainActivity.this,reportItems);
 
-                        //@@@@@step3. 현재 정보들 mysql driverrecord 테이블에 저장
+                        //@@@@@step2. 현재 정보들 mysql driverrecord 테이블에 저장
                         putdriverrecord(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
 
 
@@ -311,16 +323,20 @@ import retrofit2.Response;
 //            showUserName(useremail); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
 //        }
 //        showUserName(DataHolder.getUseremail()); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
-//        //end
+        //end
 
         //현재 날씨 캡쳐하는 스레드
         weatherThread thread = new weatherThread();
         thread.start();
 
+
         //실시간 경위도 파악하는 코드 & 사용자 허용받기//
         longitude = findViewById(R.id.longitude);
         latitude = findViewById(R.id.latitude);
+
         getLogLat(); //경도 위도 얻는 메소드
+
+        getAirCondition(sidoname); //도(지역) 으로  실시간 대기질 정보 얻는 메서드
 
 
 
@@ -388,7 +404,8 @@ import retrofit2.Response;
         });
     }
 
-    //private String getCurrentWeather(double current_lati, double current_longi) {
+    //졸음 시점 순간 (캡쳐시점) 날씨  <<<<<<<<<캡처!!!!>>>>>>>시의 날씨
+
         private weatherData getCurrentWeather(double current_lati, double current_longi) {
 
         String nowTemp = "";
@@ -415,57 +432,30 @@ import retrofit2.Response;
                             nowTemp = jsonObject.getJSONObject("main").getString("temp");
                             humiditys = jsonObject.getJSONObject("main").getString("humidity");
                             description = jsonObject.getJSONArray("weather").getJSONObject(0).getString("description");
+                            Log.i("온도 썹시", nowTemp);
+                            Log.i("온도 화시", fahernheit_tocelsius(Double.valueOf(nowTemp)));
 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
 
 //                        final String msg = "캡쳐날씨22: " + description + "  습도: " + humiditys + "%  " + "현재온도: " + nowTemp ;
 //                        Log.i("Capture", msg);
 //                        Log.i("Capture",  humiditys);
 //                        Log.i("Capture",  nowTemp);
 //                        return  description;  //String 3개 있는 자료형 만들것!
-                        return  new weatherData(nowTemp,humiditys,description);  //String 3개 있는 자료형 만들것!
+                        //return  new weatherData(nowTemp,humiditys,description);  //String 3개 있는 자료형 만들것!
+                        return  new weatherData(fahernheit_tocelsius(Double.valueOf(nowTemp)),humiditys,description);//nowTemp가  현재 화씨이기때문에 썹시로 변환해줄 것
                     }
                 }
-
             } else {
                 Log.i("TAG","날씨 사이트와 연결 불가능");
-
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
        return null;
     }
-
-//    private String currentweathertemp(JSONObject jsonObject) {
-//
-//        //Log.i("info", jsonObject.toString());
-//        if (jsonObject != null) {
-//            String nowTemp = "";
-//            String humiditys = "";
-//            String description = "";
-//
-//            try {
-//                nowTemp = jsonObject.getJSONObject("main").getString("temp");
-//                humiditys = jsonObject.getJSONObject("main").getString("humidity");
-//                description = jsonObject.getJSONArray("weather").getJSONObject(0).getString("description");
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//            //description = transferWeather(description); //현재 날씨 영문을 한글로 바꿔줌
-//            final String msg = "날씨: " + description + "  습도: " + humiditys + "%  " + "현재온도: " + nowTemp ;
-//            Log.i("msg", msg);
-//
-//        }
-//        return "";
-//    }
 
 
     private LatLng getLogLat() {
@@ -629,14 +619,15 @@ import retrofit2.Response;
                 case TGDevice.MSG_RAW_DATA:
                     if (rawEnabled) {
                         //updateRawData(message.arg1);
-                        Log.w(TAG, "MSG_RAW_DATA: " + msg.arg1);
+                        //Log.w(TAG, "MSG_RAW_DATA: " + msg.arg1);
 
                         ///////RAWdata 객체 만들어서 서버에 넘겨주기////
 //                        RAWdata raWdata = new RAWdata();
 //                        raWdata.setRaw(String.valueOf(msg.arg1));
 //                        postRawData(raWdata);
-                        /////////
-                        
+                        ///////////
+
+
                     }
 
                     break;
@@ -843,9 +834,13 @@ import retrofit2.Response;
                             }
                         }
 
-                        //전자 뇌파 EEG 학습용 데이터 SERVER에 전달
-                        //postEEGData(new EEGdata(ep.delta,ep.theta,ep.lowAlpha,ep.highAlpha,ep.lowBeta,ep.highBeta,ep.lowGamma,ep.midGamma));
-                        
+                        ///EEGdata 객체 만들어서 서버에 넘겨주기////
+                        postEEGData(new EEGdata(ep.delta,ep.theta,ep.lowAlpha,ep.highAlpha,ep.lowBeta,ep.highBeta,ep.lowGamma,ep.midGamma));
+                        //////////////////
+
+                        //EEG 람다로 보내기
+                        sendEEGLamda(mURL,connMethod,new EEGdata(ep.delta,ep.theta,ep.lowAlpha,ep.highAlpha,ep.lowBeta,ep.highBeta,ep.lowGamma,ep.midGamma));
+
                         String tag="RAW Brain Waves";
                         Log.d(tag, "MSG_EEG_POWER: " + ep.delta + ", " + ep.theta  + ", " + ep.lowAlpha  + ", " + ep.highAlpha  + ", " + ep.lowBeta  + ", " + ep.highBeta + ", " + ep.lowGamma + ", " + ep.midGamma);
                         break;
@@ -900,7 +895,9 @@ import retrofit2.Response;
 //	            	if(mSendMindSignal) {
 //	            		sendMindSignal(msg.arg1, 0, 0);
 //	            	}
-                    //Log.d(tag, "Attention: " + msg.arg1 + "\n");
+
+                    postAttentionData(new Attentiondata(msg.arg1));
+                    Log.d(TAG, "Attention: " + msg.arg1 + "\n");
                     break;
 
                 case TGDevice.MSG_MEDITATION:
@@ -914,6 +911,11 @@ import retrofit2.Response;
 ////	            	if(mSendMindSignal) {
 ////	            		sendMindSignal(0, msg.arg1, 0);
 ////	            	}
+
+                    //람다로 보내는 코드
+                    //sendMeditationLamda(mURL,connMethod, new Meditationdata(msg.arg1));
+
+                    //postMeditationData(new Meditationdata(msg.arg1));  //nodejs로 보내는 코드
                     Log.d(TAG, "Meditation: " + msg.arg1 + "\n");
                     break;
 
@@ -1004,42 +1006,260 @@ import retrofit2.Response;
         }// End of handleMessage()
     };
 
-    //운전자 뇌파 학습용 데이터 서버에 전달(EEG)
-//    private void postEEGData(EEGdata data) {
-//        service.post_EEG_train(data).enqueue(new Callback<EEGTrainResponse>() {
-//            @Override
-//            public void onResponse(Call<EEGTrainResponse> call, Response<EEGTrainResponse> response) {
-//                EEGTrainResponse result = response.body();
-//                Toast.makeText(MainActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<EEGTrainResponse> call, Throwable t) {
-//                Toast.makeText(MainActivity.this, "운전자 EEG 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
-//                Log.e("운전자 EEG 데이터 삽입 에러 발생", t.getMessage());
-//                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
-//            }
-//        });
-//    }
 
-    ///운전자 뇌파 학습용 데이터 서버에 전달(RAW)
-//    private void postRawData(String data) {
-//        service.post_RAW_train(data).enqueue(new Callback<RAWTrainResponse>() {
-//            @Override
-//            public void onResponse(Call<RAWTrainResponse> call, Response<RAWTrainResponse> response) {
-//                RAWTrainResponse result = response.body();
-//                Toast.makeText(MainActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<RAWTrainResponse> call, Throwable t) {
-//                Toast.makeText(MainActivity.this, "운전자 RAW 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
-//                Log.e("운전자 RAW 데이터 삽입 에러 발생", t.getMessage());
-//                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
-//            }
-//        });
-//    }
 
+    //핸들러는 메인스레드와 workerthread의 메시지를 교환하는 도와주는 도우미역할을 한다 .
+    private static class MyHandler extends Handler{
+        private final WeakReference<MainActivity> weakReference;
+
+        private MyHandler(MainActivity mainActivity) {
+            weakReference = new WeakReference<MainActivity>(mainActivity);
+        }
+
+
+//        MessageQueue에 저장된 메시지들은 Looper에 의해 꺼내지면 handleMessage로 들어간다.
+//        그럼 handleMessage()는 실제 UI 작업을 수행단다. 이것은 mainthread이다.
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            MainActivity mainActivity = weakReference.get();
+            if(mainActivity!= null){
+                switch (msg.what){
+                    case LOAD_SUCCESS:
+                        String jsonString = (String)msg.obj;
+                        if(jsonString.isEmpty()){
+                            Log.i("lambda","jsonString은!!!null입니다.");
+                        }else{
+                            Log.i("lambda","jsonString은!  "+jsonString);
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    private final MyHandler mmHandler = new MyHandler(this);
+
+
+
+    public void sendEEGLamda(String mURL, String connMethod, EEGdata eegdata){
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String result;
+
+                try {
+                    URL url = new URL(mURL);
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setReadTimeout(3000);
+                    httpURLConnection.setConnectTimeout(3000);
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.setRequestMethod(connMethod);
+                    httpURLConnection.setRequestProperty("Content-Type", "application/json");
+                    httpURLConnection.setUseCaches(false);
+                    httpURLConnection.setDoOutput(true);
+                    JSONObject body = new JSONObject();
+
+                    body.put("DELTA",eegdata.getEeg_delta());
+                    body.put("THETA",eegdata.getEeg_theta());
+                    body.put("LOWALPHA",eegdata.getEeg_lowAlpha());
+                    body.put("HIGHALPHA",eegdata.getEeg_highAlpha());
+                    body.put("LOWBETA",eegdata.getEeg_lowBeta());
+                    body.put("HIGHBETA",eegdata.getEeg_highBeta());
+                    body.put("LOWGAMMA",eegdata.getEeg_lowGamma());
+                    body.put("MIDGAMMA",eegdata.getEeg_midGamma());
+
+
+                    Log.i("lambda","body의 값은:  "+body.toString());
+                    bodyJson=body.toString();
+                    Log.i("lambda","bodyJSON의 값은:  "+bodyJson);
+
+                    DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+                    wr.write(bodyJson.getBytes("EUC-KR"));
+                    wr.flush();
+                    wr.close();
+
+                    httpURLConnection.connect();
+
+                    int responseStatusCode = httpURLConnection.getResponseCode();
+                    Log.i("lambda", "responseStatusCode는" +responseStatusCode );
+
+                    InputStream inputStream;
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = httpURLConnection.getInputStream();
+                    } else {
+                        inputStream = httpURLConnection.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "EUC-KR");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        sb.append(line);
+                        Log.i("lambda","sb의 값은:  "+sb.toString().trim());
+                    }
+
+                    bufferedReader.close();
+                    httpURLConnection.disconnect();
+                    result = sb.toString().trim();
+                    Log.i("lambda", "result의 값은:  "+result);
+
+
+                } catch (Exception e) {
+                    result = e.toString();
+                }
+
+                //Handler 사용함( 왜 handler를 사용하는 걸까?)
+                //worker thread는 마지막에 헨들러를  이영하여 메인스레드로 메시지를 전달한다
+                Message message = mmHandler.obtainMessage(LOAD_SUCCESS, result); //메세지 객체 생성(보낼 메시지를 안에 답는다)
+                mmHandler.sendMessage(message);
+                /*sendMessage를 통해 메시지를 전달하면, 해당 메시지는 mainthread의 messageQueue에 저장된다.
+                messageQueue에 저장되면 Looper이 차례대로 메세지를 꺼내고 handleMessage()로 전달된다
+                */
+
+            }
+        });
+        thread.start();
+
+
+    }
+
+
+
+    public void sendMeditationLamda(String mURL, String connMethod, Meditationdata meditation) {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String result;
+
+                try {
+                    URL url = new URL(mURL);
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setReadTimeout(3000);
+                    httpURLConnection.setConnectTimeout(3000);
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.setRequestMethod(connMethod);
+                    httpURLConnection.setRequestProperty("Content-Type", "application/json");
+                    httpURLConnection.setUseCaches(false);
+                    httpURLConnection.setDoOutput(true);
+                    JSONObject body = new JSONObject();
+                    body.put("MEDITATION", meditation.getMeditation());
+                    Log.i("lambda","body의 값은:  "+body.toString());
+                    bodyJson=body.toString();
+                    Log.i("lambda","bodyJSON의 값은:  "+bodyJson);
+
+                    DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+                    wr.write(bodyJson.getBytes("EUC-KR"));
+                    wr.flush();
+                    wr.close();
+
+                    httpURLConnection.connect();
+
+                    int responseStatusCode = httpURLConnection.getResponseCode();
+                    Log.i("lambda", "responseStatusCode는" +responseStatusCode );
+
+                    InputStream inputStream;
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = httpURLConnection.getInputStream();
+                    } else {
+                        inputStream = httpURLConnection.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "EUC-KR");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        sb.append(line);
+                        Log.i("lambda","sb의 값은:  "+sb.toString().trim());
+                    }
+
+                    bufferedReader.close();
+                    httpURLConnection.disconnect();
+                    result = sb.toString().trim();
+                    Log.i("lambda", "result의 값은:  "+result);
+
+
+                } catch (Exception e) {
+                    result = e.toString();
+                }
+
+                //Handler 사용함( 왜 handler를 사용하는 걸까?)
+                //worker thread는 마지막에 헨들러를  이영하여 메인스레드로 메시지를 전달한다
+                Message message = mmHandler.obtainMessage(LOAD_SUCCESS, result); //메세지 객체 생성(보낼 메시지를 안에 답는다)
+                mmHandler.sendMessage(message);
+                /*sendMessage를 통해 메시지를 전달하면, 해당 메시지는 mainthread의 messageQueue에 저장된다.
+                messageQueue에 저장되면 Looper이 차례대로 메세지를 꺼내고 handleMessage()로 전달된다
+                */
+
+            }
+        });
+        thread.start();
+
+
+  }
+
+
+
+    private void postMeditationData(Meditationdata meditation) {
+        service.post_MEDITATION_train(meditation).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                //Toast.makeText(MainActivity.this, "운전자 Meditation 데이터 삽입 성공", Toast.LENGTH_SHORT).show();
+                //Log.e(TAG, "운전자 Meditation 데이터 삽입 성공");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //Toast.makeText(MainActivity.this, "운전자 Meditation 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                //Log.e("운전자 MEd 데이터 삽입 에러 발생", t.getMessage());
+                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
+            }
+        });
+    }
+
+    private void postAttentionData(Attentiondata attention) {
+        service.post_ATTENTION_train(attention).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                //Toast.makeText(MainActivity.this, "운전자 Attention 데이터 삽입 성공", Toast.LENGTH_SHORT).show();
+                //Log.e(TAG, "운전자 Attention 데이터 삽입 성공");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //Toast.makeText(MainActivity.this, "운전자 Attention 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                //Log.e("운전자 어텐션 데이터 삽입 에러 발생", t.getMessage());
+                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
+            }
+        });
+    }
+
+
+    /////운전자 뇌파 학습용 데이터 서버에 전달(EEG)
+    private void postEEGData(EEGdata data) {
+        service.post_EEG_train(data).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Toast.makeText(MainActivity.this, "운전자 EEG 데이터 삽입 성공", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "운전자 EEG 데이터 삽입 성공");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "운전자 EEG 데이터를 삽입하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                Log.e("운전자 EEG 데이터 삽입 에러 발생", t.getMessage());
+                t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해줌
+            }
+        });
+    }
+
+
+    /////운전자 뇌파 학습용 데이터 서버에 전달(RAW)
     private void postRawData(RAWdata data){
         service.post_RAW_train(data).enqueue(new Callback<Void>() {
             @Override
@@ -1174,8 +1394,7 @@ import retrofit2.Response;
 ////////////////////////////////////////////////////////
 
 
-    //위도 , 경도로 <주소> 가져오는 메서드
-    //private void getCurrentAddress(double latitude1, double longitude1) {
+    //위도 , 경도로 <<<<<주소>>>>>>> 가져오는 메서드
     private String getCurrentAddress(double latitude1, double longitude1) {
         Geocoder geocoder = new Geocoder(this, Locale.KOREAN);
         List<Address> addresses = null;
@@ -1193,24 +1412,104 @@ import retrofit2.Response;
             }else{
                 curr_temp.setText( addresses.get(0).getAdminArea()+" "+ addresses.get(0).getSubLocality() +" "+ addresses.get(0).getThoroughfare());
                 Log.i("address", "주소 :" + addresses.get(0).getAdminArea()+" "+ addresses.get(0).getSubLocality() +" "+ addresses.get(0).getThoroughfare());
+
+                if(addresses.get(0).getAdminArea().equals("서울특별시")){
+                    sidoname = "서울";
+                    Log.i("address", "시도는 "+ sidoname);
+                }else if(addresses.get(0).getAdminArea().equals("경기도")){
+                    sidoname = "경기";
+                    Log.i("address", "시도는 "+ sidoname);
+                }
+
                 return addresses.get(0).getAdminArea()+" "+ addresses.get(0).getSubLocality() +" "+ addresses.get(0).getThoroughfare();
             }
         }
         return"";
     }
 
+    //시도(경기도, 서울만 함) 로 실시간 <<<<<대기정보>>>>>> 가져오는 메서드
+    private void getAirCondition(String sidoname){
+        Log.i("sido", "url직전의 받아온 sidoname은 " +sidoname+ " 입니다.");
+        String url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=RDhwJsKNojKg%2BfDAA%2F86XHsR11xWnim58B9cIh%2FO9I4Ro4eSPLNLL8zrqT%2BWkWPtYv%2FomBDW7CIZuHpLGbDv1g%3D%3D&returnType=json&numOfRows=1&pageNo=1&sidoName="+sidoname+"&ver=1.0";
+        ReceiveAirConditionTask receiveAirConditionTask = new ReceiveAirConditionTask();
+        receiveAirConditionTask.execute(url);
+
+        }
 
 
-    //위도, 경도로 <날씨> 가져오는 메서드
-    private void getWeatherDate(double lat, double lng) {
-        String url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=imperial&appid=cbc16f370cdaaf4fb2b2b211507a5c59&lang=kr";
-        ReceiveWeatherTask receiveUseTask = new ReceiveWeatherTask();
-        receiveUseTask.execute(url);
+    //시도(경기도, 서울만 함) 로 실시간 <<<<<대기정보>>>>>> 가져오는 메서드가 비동기로 실시간 돌아가게 하는 AsyncTank 상속받은 메서드
+    /*
+     * AsyncTask 에 대한 설명 링크 읽어볼것!
+     * https://lktprogrammer.tistory.com/165
+     */
+    private class ReceiveAirConditionTask extends AsyncTask<String, Void, JSONObject>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            try{
+
+                HttpURLConnection conn = (HttpURLConnection) new URL(strings[0]).openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Content-type","application/json");
+                Log.i("Response code", conn.getResponseCode()+"");
+
+                BufferedReader rd;
+                if(conn.getResponseCode()>=200 && conn.getResponseCode()<=300){
+                    rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                }else {
+                    rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                }
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    //sb.append(line);
+                    JSONObject jsonObject = new JSONObject(line);
+                    return jsonObject;
+                }
+                rd.close();
+                conn.disconnect();
+                //Log.i("sido AIR DATA" , sb.toString());
+
+
+
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            Log.i("sido AIR DATA", jsonObject.toString());
+            ///////////여기서 JSON object해제해주기!///////////////
+
+
+
+
+
+        }
 
     }
 
 
-    //위도, 경도로 <날씨> 가져오는 메서드가 비동기로 실시간 돌아가게 하는 AsyncTask
+    //위도, 경도로 <<<<<날씨>>>>>> 가져오는 메서드
+    private void getWeatherDate(double lat, double lng) {
+        String url = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&units=imperial&appid=cbc16f370cdaaf4fb2b2b211507a5c59&lang=kr";
+        ReceiveWeatherTask receiveUseTask = new ReceiveWeatherTask();
+        receiveUseTask.execute(url);
+    }
+
+
+    //위도, 경도로 <<<<<<<날씨>>>>> 가져오는 메서드가 비동기로 실시간 돌아가게 하는 AsyncTask
+    /*
+    * AsyncTask 에 대한 설명 링크 읽어볼것!
+    * https://lktprogrammer.tistory.com/165
+    */
     private class ReceiveWeatherTask extends AsyncTask<String, Void, JSONObject> {
 
         @Override
@@ -1219,7 +1518,9 @@ import retrofit2.Response;
         }
 
 
-        @Override
+
+        //메인스레드 아니고 별게 작업스레드드
+       @Override
         protected JSONObject doInBackground(String... strings) {
             try {
 
@@ -1284,7 +1585,8 @@ import retrofit2.Response;
                 }
 
                  //description = transferWeather(description); //현재 날씨 영문을 한글로 바꿔줌
-                final String msg = "날씨: " + description + "  습도: " + humiditys + "%   풍속: " + speed + "m/s " + "현재온도: " + nowTemp + "/최저: " + minTemp + "/최고: " + maxTemp;
+                //final String msg = "날씨: " + description + "  습도: " + humiditys + "%   풍속: " + speed + "m/s " + "현재온도: " + nowTemp + "/최저: " + minTemp + "/최고: " + maxTemp;
+                final String msg = "날씨: " + description + "  습도: " + humiditys + "%   풍속: " + speed + "m/s " + "현재온도: " + fahernheit_tocelsius(Double.parseDouble(nowTemp)) + "/최저: " + fahernheit_tocelsius(Double.parseDouble(minTemp)) + "/최고: " + fahernheit_tocelsius(Double.parseDouble(maxTemp));
                 Log.i("msg", msg);
 
                 String celsius_now =fahernheit_tocelsius(Double.parseDouble(nowTemp));
@@ -1303,6 +1605,8 @@ import retrofit2.Response;
     }
 
 
+
+
     //화씨에서 썹시로 변환 메소드
     private String fahernheit_tocelsius(Double faher_temp) {
         Double cels_temp= (faher_temp- 32.0)/1.8;
@@ -1310,6 +1614,7 @@ import retrofit2.Response;
         return cels_temp.toString();
     }
 
+    //현재 날씨 가져오는 thread(졸음 캡쳐시 그 당시의 날씨) <<<<<캡쳐할때 실행되는 THREAD!!>>>>>
     class weatherThread extends Thread{
         public weatherThread() {
         }
@@ -1321,7 +1626,7 @@ import retrofit2.Response;
     }
 
 
-    //RETROFIT 2이용해서 이메일 이용하여 사용자이름 받아노는 메소드
+    //RETROFIT 2이용해서  이메일 이용하여 사용자이름 받아노는 메소드
     private void showUserName(String data) {
         service.getName(data).enqueue(new Callback<GetNameResponse>() {
             @Override

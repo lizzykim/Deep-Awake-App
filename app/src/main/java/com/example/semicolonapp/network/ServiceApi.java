@@ -1,11 +1,11 @@
 package com.example.semicolonapp.network;
 
-import com.example.semicolonapp.data.EEGTrainResponse;
+import com.example.semicolonapp.data.Attentiondata;
 import com.example.semicolonapp.data.EEGdata;
 import com.example.semicolonapp.data.GetNameResponse;
 import com.example.semicolonapp.data.LoginData;
 import com.example.semicolonapp.data.LoginResponse;
-import com.example.semicolonapp.data.RAWTrainResponse;
+import com.example.semicolonapp.data.Meditationdata;
 import com.example.semicolonapp.data.RAWdata;
 import com.example.semicolonapp.data.RegisterData;
 import com.example.semicolonapp.data.RegisterResponse;
@@ -41,8 +41,17 @@ public interface ServiceApi {
     //Call<Void> post_RAW_train(@Body String data);
     Call<Void> post_RAW_train(@Body RAWdata data);
 
-//    @POST("/user/eeg/train_eeg") //운전자 뇌파 학습용 데이터 서버에 전달(임시 => nodejs/ 추후 aws 람다)
-//    Call<EEGTrainResponse> post_EEG_train(@Body EEGdata data);
+    @POST("/user/eeg/train_eeg") //운전자 뇌파 학습용 데이터 서버에 전달(임시 => nodejs/ 추후 aws 람다)
+    Call<Void> post_EEG_train(@Body EEGdata data);
+
+    @POST("/user/eeg/attention") //운전자 뇌파 학습용 데이터 서버에 전달(임시 => nodejs/ 추후 aws 람다)
+    Call<Void> post_ATTENTION_train(@Body Attentiondata data);
+
+    @POST("/user/eeg/meditation") //운전자 뇌파 학습용 데이터 서버에 전달(임시 => nodejs/ 추후 aws 람다)
+    Call<Void> post_MEDITATION_train(@Body Meditationdata data);
+
+//    @POST("https://0nmhkvy9nf.execute-api.ap-northeast-2.amazonaws.com/semicolon")
+//    Call<Void> post_Lambda_MEDITATIOM_train(@Body Meditationdata data);
 
 
 }
