@@ -29,6 +29,7 @@ import com.example.semicolonapp.brain.Constants;
 import com.example.semicolonapp.brain.SerialCommand;
 import com.example.semicolonapp.brain.SerialConnector;
 import com.example.semicolonapp.brain.SignalHolder;
+import com.example.semicolonapp.data.AirData;
 import com.example.semicolonapp.data.Attentiondata;
 import com.example.semicolonapp.data.DataHolder;
 import com.example.semicolonapp.data.EEGdata;
@@ -46,6 +47,7 @@ import com.neurosky.thinkgear.TGDevice;
 import com.neurosky.thinkgear.TGEegPower;
 import com.neurosky.thinkgear.TGRawMulti;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -55,7 +57,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.security.spec.ECField;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +80,8 @@ import retrofit2.Response;
     private static final String TAG = "MainActivity";
 
     ////람다
-    private String mURL = "https://0nmhkvy9nf.execute-api.ap-northeast-2.amazonaws.com/semicolon";
+    //private String mURL = "https://0nmhkvy9nf.execute-api.ap-northeast-2.amazonaws.com/semicolon";
+    private String mURL = "https://w7rm40xsh3.execute-api.ap-northeast-2.amazonaws.com/semicolon2";
     private String connMethod ="POST";
     private String bodyJson;
     private static final int LOAD_SUCCESS=101;
@@ -168,8 +174,38 @@ import retrofit2.Response;
     String current_temp="";
     String current_humidity="";
 
-    //공기
+    //대기질
     String sidoname="";
+//    String current_pm10Value="";
+//    String current_pm25Value="";
+//    String current_so2Value="";
+//    String current_coValue="";
+//    String current_o3Value="";
+//    String current_no2Value="";
+//
+//    String current_pm10Grade="";
+//    String current_pm25Grade="";
+//    String current_so2Grade="";
+//    String current_coGrade="";
+//    String current_o3Grade="";
+//    String current_no2Grade="";
+
+    //AsyncTask 변수들
+    String pm10Value="";
+    String pm25Value="";
+    String so2Value="";
+    String coValue="";
+    String o3Value="";
+    String no2Value="";
+
+
+    String pm10Grade="";
+    String pm25Grade="";
+    String so2Grade="";
+    String coGrade="";
+    String o3Grade="";
+    String no2Grade="";
+
 
 
 
@@ -291,12 +327,48 @@ import retrofit2.Response;
                         Log.i("Capture","캡쳐 온도: " + current_temp);
 
                         Toast.makeText(MainActivity.this, "졸음 시점 환경 데이터:  경도=" + current_lati_string +" 위도=" + current_longi_string + " 위치="+current_address +" 시간="+current_time+" 날씨="+current_weather +" 온도="+current_temp+" 습도="+current_humidity,Toast.LENGTH_SHORT).show();
+
+
+
+
+                        //e)현재(캡쳐시) 대기정보 불러오기
+//                        Log.i("Capture","캡쳐 미세먼지: " + current_pm10Value);
+//                        Log.i("Capture","캡쳐 초미세먼지: " +  current_pm25Value);
+//                        Log.i("Capture","캡쳐 아황산가스: " + current_so2Value);
+//                        Log.i("Capture","캡쳐 일산화탄소: " + current_coValue);
+//                        Log.i("Capture","캡쳐 오존: " +  current_o3Value);
+//                        Log.i("Capture","캡쳐 이산화질소: " + current_no2Value);
+//
+//                        Log.i("Capture","캡쳐 미세먼지등급: " + current_pm10Grade);
+//                        Log.i("Capture","캡쳐 초미세먼지등급: " +  current_pm25Grade);
+//                        Log.i("Capture","캡쳐 아황산가스등급: " + current_so2Grade);
+//                        Log.i("Capture","캡쳐 일산화탄소등급: " + current_coGrade);
+//                        Log.i("Capture","캡쳐 오존등급: " +  current_o3Grade);
+//                        Log.i("Capture","캡쳐 이산화질소등급: " + current_no2Grade);
+
+
+
+                        Log.i("Capture","캡쳐 미세먼지: " + pm10Value);
+                        Log.i("Capture","캡쳐 초미세먼지: " +  pm25Value);
+                        Log.i("Capture","캡쳐 아황산가스: " + so2Value);
+                        Log.i("Capture","캡쳐 일산화탄소: " + coValue);
+                        Log.i("Capture","캡쳐 오존: " +  o3Value);
+                        Log.i("Capture","캡쳐 이산화질소: " + no2Value);
+
+                        Log.i("Capture","캡쳐 미세먼지등급: " + pm10Grade);
+                        Log.i("Capture","캡쳐 초미세먼지등급: " +  pm25Grade);
+                        Log.i("Capture","캡쳐 아황산가스등급: " +  so2Grade);
+                        Log.i("Capture","캡쳐 일산화탄소등급: " + coGrade);
+                        Log.i("Capture","캡쳐 오존등급: " + o3Grade);
+                        Log.i("Capture","캡쳐 이산화질소등급: " + no2Grade);
+
+
                         Log.i("reportitems",reportItems.toString());
 
 
                         //@@@@@step2. 현재 정보들 mysql driverrecord 테이블에 저장
-                        putdriverrecord(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
-
+                        //putdriverrecord(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity));
+                        putdriverrecord(new ReportItemData(current_lati_string,current_longi_string,current_time,current_address,current_weather,current_temp,current_humidity,pm10Value,pm25Value,so2Value,coValue,o3Value,no2Value,pm10Grade,pm25Grade,so2Grade,coGrade,o3Grade,no2Grade));
 
                         break;
 
@@ -328,6 +400,12 @@ import retrofit2.Response;
         //현재 날씨 캡쳐하는 스레드
         weatherThread thread = new weatherThread();
         thread.start();
+
+        //현재 대기질 캡쳐하는 스레드 sidoname이 존재할때 쓰레드 시작.
+//        if(sidoname != null) {
+//            AirConditionThread thread2 = new AirConditionThread();
+//            thread2.start();
+//        }
 
 
         //실시간 경위도 파악하는 코드 & 사용자 허용받기//
@@ -405,7 +483,6 @@ import retrofit2.Response;
     }
 
     //졸음 시점 순간 (캡쳐시점) 날씨  <<<<<<<<<캡처!!!!>>>>>>>시의 날씨
-
         private weatherData getCurrentWeather(double current_lati, double current_longi) {
 
         String nowTemp = "";
@@ -428,6 +505,7 @@ import retrofit2.Response;
                 while ((readed = in.readLine()) != null) {
                     JSONObject jsonObject = new JSONObject(readed);
                     if (jsonObject != null) {
+
                         try {
                             nowTemp = jsonObject.getJSONObject("main").getString("temp");
                             humiditys = jsonObject.getJSONObject("main").getString("humidity");
@@ -456,6 +534,92 @@ import retrofit2.Response;
         }
        return null;
     }
+
+    //Thread.
+    //졸음 시점 순간 (캡쳐시점) 대기질  <<<<<<<<<캡처!!!!>>>>>>>
+//    private AirData getCurrentAirCondition(String sidoname) throws JSONException {
+//
+//        String pm10Value = "";
+//        String pm25Value = "";
+//        String so2Value = "";
+//        String coValue = "";
+//        String o3Value = "";
+//        String no2Value = "";
+//
+//
+//        String pm10Grade = "";
+//        String pm25Grade = "";
+//        String so2Grade = "";
+//        String coGrade = "";
+//        String o3Grade = "";
+//        String no2Grade = "";
+//        String url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=RDhwJsKNojKg%2BfDAA%2F86XHsR11xWnim58B9cIh%2FO9I4Ro4eSPLNLL8zrqT%2BWkWPtYv%2FomBDW7CIZuHpLGbDv1g%3D%3D&returnType=json&numOfRows=1&pageNo=1&sidoName=" + sidoname + "&ver=1.0";
+//
+//
+//
+//
+//        try {
+//            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+//            conn.setRequestMethod("GET");
+//            conn.setRequestProperty("Content-type", "application/json");
+//            Log.i("Response code", conn.getResponseCode() + "");
+//
+//            BufferedReader rd;
+//            if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+//                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//            } else {
+//                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+//            }
+//
+//            StringBuilder sb = new StringBuilder();
+//            String line;
+//            while ((line = rd.readLine()) != null) {
+//                sb.append(line);
+//                Log.i("sbbbbb",sb+"");
+//
+//                JSONObject jsonObject = new JSONObject(line);
+//                Log.i("sbbbbb",jsonObject.toString());
+//
+//                //if (jsonObject != null   ) {
+//                if (jsonObject.getJSONObject("response").getJSONObject("header").getString("resultCode").equals("00")) {
+//                    try {
+//                        pm10Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm10Value");
+//                        pm25Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm25Value");
+//                        so2Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("so2Value");
+//                        coValue = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("coValue");
+//                        o3Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("o3Value");
+//                        no2Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("no2Value");
+//
+//
+//                        pm10Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm10Grade");
+//                        pm25Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm25Grade");
+//                        so2Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("so2Grade");
+//                        coGrade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("coGrade");
+//                        o3Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("o3Grade");
+//                        no2Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("no2Grade");
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    return new AirData(pm10Value,pm25Value,so2Value,coValue,o3Value,no2Value,pm10Grade,pm25Grade,so2Grade,coGrade,o3Grade,no2Grade);
+//
+//                }
+//            }
+//        } catch (ProtocolException protocolException) {
+//            protocolException.printStackTrace();
+//        } catch (MalformedURLException malformedURLException) {
+//            malformedURLException.printStackTrace();
+//        } catch (IOException ioException) {
+//            ioException.printStackTrace();
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//
+//        }
+//        return null;
+//    }
+
 
 
     private LatLng getLogLat() {
@@ -913,7 +1077,7 @@ import retrofit2.Response;
 ////	            	}
 
                     //람다로 보내는 코드
-                    //sendMeditationLamda(mURL,connMethod, new Meditationdata(msg.arg1));
+                    sendMeditationLamda(mURL,connMethod, new Meditationdata(msg.arg1));
 
                     //postMeditationData(new Meditationdata(msg.arg1));  //nodejs로 보내는 코드
                     Log.d(TAG, "Meditation: " + msg.arg1 + "\n");
@@ -1098,13 +1262,13 @@ import retrofit2.Response;
 
                     while ((line = bufferedReader.readLine()) != null) {
                         sb.append(line);
-                        Log.i("lambda","sb의 값은:  "+sb.toString().trim());
+                        //Log.i("lambda","sb의 값은:  "+sb.toString().trim());
                     }
 
                     bufferedReader.close();
                     httpURLConnection.disconnect();
                     result = sb.toString().trim();
-                    Log.i("lambda", "result의 값은:  "+result);
+                    //Log.i("lambda", "result의 값은:  "+result);
 
 
                 } catch (Exception e) {
@@ -1472,10 +1636,7 @@ import retrofit2.Response;
                 }
                 rd.close();
                 conn.disconnect();
-                //Log.i("sido AIR DATA" , sb.toString());
-
-
-
+                Log.i("sido AIR DATA" , sb.toString());
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -1487,9 +1648,53 @@ import retrofit2.Response;
         protected void onPostExecute(JSONObject jsonObject) {
             Log.i("sido AIR DATA", jsonObject.toString());
             ///////////여기서 JSON object해제해주기!///////////////
+            if(jsonObject != null){
+                //변수 선언( 수치 & 등급)
+//                String pm10Value="";
+//                String pm25Value="";
+//                String so2Value="";
+//                String coValue="";
+//                String o3Value="";
+//                String no2Value="";
+//
+//
+//                String pm10Grade="";
+//                String pm25Grade="";
+//                String so2Grade="";
+//                String coGrade="";
+//                String o3Grade="";
+//                String no2Grade="";
+
+                try{
+
+                    pm10Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm10Value");
+                    pm25Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm25Value");
+                    so2Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("so2Value");
+                    coValue = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("coValue");
+                    o3Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("o3Value");
+                    no2Value = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("no2Value");
+
+
+                    pm10Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm10Grade");
+                    pm25Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("pm25Grade");
+                    so2Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("so2Grade");
+                    coGrade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("coGrade");
+                    o3Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("o3Grade");
+                    no2Grade = jsonObject.getJSONObject("response").getJSONObject("body").getJSONArray("items").getJSONObject(0).getString("no2Grade");
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                final String air = " pm10Value(미세먼지):"+ pm10Value +" pm25Value(초미세먼지):"+ pm25Value +" so2Value(아황산가스):"+ so2Value +" coValue(일산화탄소):"+ coValue +" o3Value(오존):"+ o3Value +" no2Value(이산화질소):"+ no2Value ;
+                final String air_grade = " pm10Grade(미세먼지등급):"+ pm10Grade+" pm25Grade(초미세먼지등급):"+ pm25Grade +" so2Grade(아황산가스등급):"+ so2Grade +" coGrade(일산화탄소등급):"+ coGrade +" o3Grade(오존등급):"+ o3Grade +" no2Grade(이산화질소등급):"+ no2Grade ;     ;
 
 
 
+                Log.i("air", air);
+                Log.i("air_grade", air_grade);
+
+            }
 
 
         }
@@ -1556,7 +1761,7 @@ import retrofit2.Response;
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-            //Log.i("info", jsonObject.toString());
+            //Log.i("weather", jsonObject.toString());
             if (jsonObject != null) {
 
                 String iconName = "";
@@ -1625,6 +1830,83 @@ import retrofit2.Response;
         }
     }
 
+
+
+
+//    class AirConditionThread extends Thread{
+//        public AirConditionThread() {
+//        }
+//
+//        @Override
+//        public void run() {
+//
+//            if(sidoname.equals("경기")||sidoname.equals("서울")) {
+//
+//                try {
+//                    current_pm10Value = getCurrentAirCondition(sidoname).getPm10Value();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_pm25Value = getCurrentAirCondition(sidoname).getPm25Value();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_so2Value = getCurrentAirCondition(sidoname).getSo2Value();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_coValue = getCurrentAirCondition(sidoname).getCoValue();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_o3Value = getCurrentAirCondition(sidoname).getO3Value();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_no2Value = getCurrentAirCondition(sidoname).getNo2Value();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                try {
+//                    current_pm10Grade = getCurrentAirCondition(sidoname).getPm10Grade();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_pm25Grade = getCurrentAirCondition(sidoname).getPm25Grade();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_so2Grade = getCurrentAirCondition(sidoname).getSo2Grade();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_coGrade = getCurrentAirCondition(sidoname).getCoGrade();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_o3Grade = getCurrentAirCondition(sidoname).getO3Grade();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    current_no2Grade = getCurrentAirCondition(sidoname).getNo2Grade();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }
+//    }
 
     //RETROFIT 2이용해서  이메일 이용하여 사용자이름 받아노는 메소드
     private void showUserName(String data) {
