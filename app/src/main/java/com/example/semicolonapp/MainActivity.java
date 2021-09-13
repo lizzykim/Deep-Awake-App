@@ -326,10 +326,6 @@ import retrofit2.Response;
                         Log.i("Capture","캡쳐 습도: " +  current_humidity);
                         Log.i("Capture","캡쳐 온도: " + current_temp);
 
-                        Toast.makeText(MainActivity.this, "졸음 시점 환경 데이터:  경도=" + current_lati_string +" 위도=" + current_longi_string + " 위치="+current_address +" 시간="+current_time+" 날씨="+current_weather +" 온도="+current_temp+" 습도="+current_humidity,Toast.LENGTH_SHORT).show();
-
-
-
 
                         //e)현재(캡쳐시) 대기정보 불러오기
 //                        Log.i("Capture","캡쳐 미세먼지: " + current_pm10Value);
@@ -364,6 +360,7 @@ import retrofit2.Response;
 
 
                         Log.i("reportitems",reportItems.toString());
+                        Toast.makeText(MainActivity.this, "졸음 시점 환경 데이터:  경도=" + current_lati_string +" 위도=" + current_longi_string + " 위치="+current_address +" 시간="+current_time+" 미세먼지="+pm10Value,Toast.LENGTH_SHORT).show();
 
 
                         //@@@@@step2. 현재 정보들 mysql driverrecord 테이블에 저장
@@ -387,21 +384,21 @@ import retrofit2.Response;
 
         /////@@@주의! mainactivity 에서 시작한다면  밑에 end까지는 주석 처리하고 돌려볼것!
         //메인 화면 들어올때 username SQL,RETROFIT2 으로 받아오는 코드//
-//        if(DataHolder.getUseremail() == null){
-//            Intent intent = getIntent(); //로그인 유저의 이메일 가져오기(로그인에서!)
-//            useremail = intent.getExtras().getString("useremail");
-//            DataHolder.setUseremail(useremail);
-//            Log.i("useremail", useremail);
-//            showUserName(useremail); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
-//        }
-//        showUserName(DataHolder.getUseremail()); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
+        if(DataHolder.getUseremail() == null){
+            Intent intent = getIntent(); //로그인 유저의 이메일 가져오기(로그인에서!)
+            useremail = intent.getExtras().getString("useremail");
+            DataHolder.setUseremail(useremail);
+            Log.i("useremail", useremail);
+            showUserName(useremail); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
+        }
+        showUserName(DataHolder.getUseremail()); //사용자 이름을 알아내기 위해 로그인한 이메일을 대입.
         //end
 
         //현재 날씨 캡쳐하는 스레드
         weatherThread thread = new weatherThread();
         thread.start();
 
-        //현재 대기질 캡쳐하는 스레드 sidoname이 존재할때 쓰레드 시작.
+        //현재 대기질 캡쳐하는 스레드 sidoname이 존재할때 쓰레드 시작.(일단  Thread 대신 AyscTask로 대체 해서 사용함)
 //        if(sidoname != null) {
 //            AirConditionThread thread2 = new AirConditionThread();
 //            thread2.start();

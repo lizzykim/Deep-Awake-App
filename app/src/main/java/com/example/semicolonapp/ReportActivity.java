@@ -77,6 +77,22 @@ public class ReportActivity extends AppCompatActivity {
                 intent.putExtra("humidity",ItemsArrays.get(position).getHumidity());
                 intent.putExtra("lat",ItemsArrays.get(position).getLat());
                 intent.putExtra("long",ItemsArrays.get(position).getLon());
+
+                intent.putExtra("pm10Value",ItemsArrays.get(position).getPm10Value());
+                intent.putExtra("pm25Value",ItemsArrays.get(position).getPm25Value());
+                intent.putExtra("so2Value",ItemsArrays.get(position).getSo2Value());
+                intent.putExtra("coValue",ItemsArrays.get(position).getCoValue());
+                intent.putExtra("o3Value",ItemsArrays.get(position).getO3Value());
+                intent.putExtra("no2Value",ItemsArrays.get(position).getNo2Value());
+                intent.putExtra("pm10Grade",ItemsArrays.get(position).getPm10Grade());
+                intent.putExtra("pm25Grade",ItemsArrays.get(position).getPm25Grade());
+                intent.putExtra("so2Grade",ItemsArrays.get(position).getSo2Grade());
+                intent.putExtra("coGrade",ItemsArrays.get(position).getCoGrade());
+                intent.putExtra("o3Grade",ItemsArrays.get(position).getO3Grade());
+                intent.putExtra("no2Grade",ItemsArrays.get(position).getNo2Grade());
+
+
+
                 //intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
@@ -101,8 +117,8 @@ public class ReportActivity extends AppCompatActivity {
 //                    Log.d("message", ""+result.getDatentime());
 //                    Log.d("message", ""+result.getLocation());
 //                    Log.d("message", ""+result.getWeather());
-//                    Log.d("message", ""+result.getTemperature());
-//                    Log.d("message", ""+result.getHumidity());
+//                    Log.d("message", ""+result.getPm10Value());
+//                    Log.d("message", ""+result.getPm10Grade());
 
                     for( int i =0 ;i<result.getLat().size() ;i++){
                         data = new ReportItemData();
@@ -114,6 +130,23 @@ public class ReportActivity extends AppCompatActivity {
                         data.setWeather(result.getWeather().get(i));
                         data.setTemperature(result.getTemperature().get(i));
                         data.setHumidity(result.getHumidity().get(i));
+
+                        data.setPm10Value(result.getPm10Value().get(i));
+                        data.setPm25Value(result.getPm25Value().get(i));
+                        data.setSo2Value(result.getSo2Value().get(i));
+                        data.setCoValue(result.getCoValue().get(i));
+                        data.setO3Value(result.getO3Value().get(i));
+                        data.setNo2Value(result.getNo2Value().get(i));
+                        data.setPm10Grade(result.getPm10Grade().get(i));
+                        data.setPm25Grade(result.getPm25Grade().get(i));
+                        data.setSo2Grade(result.getSo2Grade().get(i));
+                        data.setCoGrade(result.getCoGrade().get(i));
+                        data.setO3Grade(result.getO3Grade().get(i));
+                        data.setNo2Grade(result.getNo2Grade().get(i));
+
+
+
+
                         ItemsArrays.add(data);
 
                         //Log.d("messageloop", ""+result.getLat().get(i));
