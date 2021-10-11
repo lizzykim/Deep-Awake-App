@@ -233,17 +233,6 @@ public class RenderingView extends View {
         }
 
 
-//		int[] colorArray = new int[9];
-//		colorArray[0] = 0xFF000000;
-//		colorArray[1] = 0xFF00FF00;
-//		colorArray[2] = 0xFF00AA00;
-//		colorArray[3] = 0xFF0000FF;
-//		colorArray[4] = 0xFF0000AA;
-//		colorArray[5] = 0xFFFF0000;
-//		colorArray[6] = 0xFFAA0000;
-//		colorArray[7] = 0xFFAAAAAA;
-//		colorArray[8] = 0xFF777777;
-
         int[] colorArray = new int[5];
         colorArray[0] = 0xFF555555;
         colorArray[1] = 0xFF999999;
@@ -252,76 +241,39 @@ public class RenderingView extends View {
         colorArray[4] = 0xFF0000FF;
 
 
-        // Make sum except delta
-        float sum = /* power.theta + */ power.highAlpha + power.lowAlpha + power.highBeta + power.lowBeta + power.midGamma + power.lowGamma;
-
-        // Calculate each relative power
-        /**
-         * Theta power is too big. Do not sum theta.
-         float relativeTheta = 0f;
-         relativeTheta = (power.theta / sum) * 100;
-         */
-        float relativeLowAlpha = (power.lowAlpha / sum) * 100;
-        float relativeHighAlpha = (power.highAlpha / sum) * 100;
-
-        float relativeLowBeta = (power.lowBeta / sum) * 100;
-        float relativeHighBeta = (power.highBeta / sum) * 100;
-
-        float relativeLowGamma = (power.lowGamma / sum) * 100;
-        float relativeMidGamma = (power.midGamma / sum) * 100;
-
-//		float[] relativeValue = new float[9];
-//		relativeValue[0] = 0f;
-//		relativeValue[1] = power.delta;
-//		relativeValue[2] = power.theta;
-//		relativeValue[3] = relativeLowAlpha;
-//		relativeValue[4] = relativeHighAlpha;
-//		relativeValue[5] = relativeLowBeta;
-//		relativeValue[6] = relativeHighBeta;
-//		relativeValue[7] = relativeLowGamma;
-//		relativeValue[8] = relativeMidGamma;
-
         float[] relativeValue = new float[5];
         relativeValue[0] = power.delta;
         relativeValue[1] = power.theta;
-        // relativeValue[2] = relativeLowAlpha+relativeHighAlpha;
         relativeValue[2] = power.lowAlpha+power.highAlpha;
-        // relativeValue[3] = relativeLowBeta+relativeHighBeta;
         relativeValue[3] = power.lowBeta+power.highBeta;
-        // relativeValue[4] = relativeLowGamma+relativeMidGamma;
         relativeValue[4] = power.lowGamma+power.midGamma;
 
         // Calculate scale, drawing block size
         int elementCount = 5;
-        int offset = mViewH / elementCount;
+        int offset = mViewH / elementCount;  //view의 세로 크기로 5개 그래프 나오니깐 5로 나눠줌. offset은 한 그래프의 높이
         float scale = (float)offset / 1000000 ; // 100f;
         float scale2 = (float)offset / 30000000f;
 
         // Draw
         int drawingBottom = 0;
-        //for(int i=relativeValue.length - 1; i>2; i--) {
-        for(int i=relativeValue.length - 1; i>-1; i--) {
-//            Log.d(tag, "colorArray[0] :" + colorArray[0]);
-//            Log.d(tag, "colorArray[1] :" + colorArray[1]);
-//            Log.d(tag, "colorArray[2] :" + colorArray[2]);
-//            Log.d(tag, "colorArray[3] :" + colorArray[3]);
-//            Log.d(tag, "colorArray[4] :" + colorArray[4]);
+
+        for(int i=relativeValue.length - 1; i>-1; i--) {  //4,3,2,1,0
             mPaint.setColor(colorArray[i]);
 
-            if(i<2) {
-                if( relativeValue[i]*scale2 > offset ) {
+            if(i<2) {  //i=(0,1), delta,theta (값이 정말 작게 나오나봄)
+                if( relativeValue[i]*scale2 > offset ) { //delta,theta가 높이/5보다 높으면,
+
+                    //drawRect 때문에 사각형으로 보임
                     mCanvas.drawRect(mCurrentDrawingX - FREQ_POINT_WIDTH_HALF, mViewH - drawingBottom - offset,
                             mCurrentDrawingX + FREQ_POINT_WIDTH_HALF, mViewH - drawingBottom,
                             mPaint);
-                }
-                else {
+                } else {  //delta,theta가 높이/5보다 낮으면,
                     mCanvas.drawRect(mCurrentDrawingX - FREQ_POINT_WIDTH_HALF, mViewH - drawingBottom - relativeValue[i]*scale2,
                             mCurrentDrawingX + FREQ_POINT_WIDTH_HALF, mViewH - drawingBottom,
                             mPaint);
                 }
 
-            }
-            else {
+            } else {  //i=(2,3,4) alpha,beta,gamma
                 if(relativeValue[i]*scale > offset) {
                     mCanvas.drawRect(mCurrentDrawingX - FREQ_POINT_WIDTH_HALF, mViewH - drawingBottom - offset,
                             mCurrentDrawingX + FREQ_POINT_WIDTH_HALF, mViewH - drawingBottom,
@@ -336,7 +288,9 @@ public class RenderingView extends View {
 
             drawingBottom += offset;
         }
-    }
+    }//drawRelativePower 끝
+
+
 
     private void drawValue(int type, int row, int value) {
         if(value + POINT_THICKNESS_HALF > mViewH)
@@ -389,14 +343,7 @@ public class RenderingView extends View {
         mBitmap = Bitmap.createBitmap(mViewW, mViewH, Bitmap.Config.ARGB_8888);
         mPaint = new Paint();
         mPaint.setAntiAlias(false);
-//        mPaint.setDither(true);
-//        mPaint.setColor(0xFFFF0000);
-//        mPaint.setStyle(Paint.Style.STROKE);
-//        mPaint.setStrokeJoin(Paint.Join.ROUND);
-//        mPaint.setStrokeCap(Paint.Cap.ROUND);
-//        mPaint.setStrokeWidth(12);
-//         mEmboss = new EmbossMaskFilter(new float[] { 1, 1, 1 }, 0.4f, 6, 3.5f);
-//         mBlur = new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL);
+
 
         mCanvas = new Canvas(mBitmap);
     }

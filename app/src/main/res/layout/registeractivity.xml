@@ -1,102 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    android:orientation="vertical"
+    android:background="@color/black"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".RegisterActivity">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="130dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="2dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/background_splash"
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:id="@+id/MindWake"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/textView3"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="140dp"
+        android:layout_marginBottom="20dp"
         android:text="DeepAwake"
-        android:textColor="@color/black"
-        android:textSize="45dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        android:textColor="#FFFFFF"
+        android:textSize="35dp"
+        android:textStyle="bold" />
 
-    <AutoCompleteTextView
-        android:id="@+id/et_email"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="240dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="이메일"
-        android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/et_pass"
-        android:layout_width="wrap_content"
+        <AutoCompleteTextView
+            android:id="@+id/et_email"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="24dp"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:baselineAligned="true"
+            android:background="@drawable/login_back"
+            android:layout_toRightOf="@+id/textView4"
+            android:layout_toEndOf="@+id/textView4"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="비밀번호"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/et_email"
-        app:layout_constraintStart_toStartOf="@+id/et_email"
-        app:layout_constraintTop_toBottomOf="@+id/et_email" />
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/et_name"
-        android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:hint="Name"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/login_back"
+            android:textSize="23dp"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="이름"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/et_pass"
-        app:layout_constraintStart_toStartOf="@+id/et_pass"
-        app:layout_constraintTop_toBottomOf="@+id/et_pass" />
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/et_age"
-        android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/et_pass"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:hint="PW"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/login_back"
+            android:textSize="23dp"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="나이"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/et_name"
-        app:layout_constraintStart_toStartOf="@+id/et_name"
-        app:layout_constraintTop_toBottomOf="@+id/et_name" />
-
-    <Button
-        android:id="@+id/btn_register"
-        android:layout_width="0dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/et_age"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:hint="Age"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/login_back"
+            android:textSize="23dp"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/login_back"
-        android:text="완료"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/et_age"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/et_age"
-        app:layout_constraintTop_toBottomOf="@+id/et_age" />
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/et_guardnum"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:hint="Guardian Number"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/login_back"
+            android:textSize="23dp"
+            android:inputType="textPersonName" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_back"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="완료"
+            android:textStyle="bold" />
+    </LinearLayout>
     <ProgressBar
         android:id="@+id/register_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
+        android:layout_gravity="center"
         android:visibility="gone"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+</LinearLayout>

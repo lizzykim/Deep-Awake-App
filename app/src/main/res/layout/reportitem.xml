@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:background="@drawable/itemstroke">
+    android:layout_width="match_parent" android:layout_height="110dp"
+    android:background="@drawable/reportdetailedge">
 
 
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:id="@+id/iv_weather"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/iv_weather"
-        android:src="@drawable/d01d"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/d01d" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="일자:"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:id="@+id/tv_datentime"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
         android:layout_toLeftOf="@+id/tv_temperature"
         android:layout_alignParentTop="true"
@@ -29,43 +30,42 @@
         />
 
     <TextView
+        android:id="@+id/tv_fullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="위치: "
-        android:textColor="@color/white"
-        android:id="@+id/tv_fullName"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="20dp"
         android:layout_alignBottom="@id/iv_weather"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:layout_toLeftOf="@+id/tv_temperature"
-        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/iv_weather"
-        />
+        android:text="위치: "
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/black" />
+
     <TextView
         android:id="@+id/tv_temperature"
         android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="온도"
-        android:textColor="@color/white"
-        android:textSize="30dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_height="75dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:gravity="center_vertical|center_horizontal" />
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="35dp"
+        android:layout_marginRight="35dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="온도"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/black"
+        android:textSize="30dp" />
 
-<!--    <ImageView-->
-<!--        android:layout_width="50dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:id="@+id/iv_arrow"-->
+    <!--    <ImageView-->
+    <!--        android:layout_width="50dp"-->
+    <!--        android:layout_height="100dp"-->
+    <!--        android:id="@+id/iv_arrow"-->
 
-<!--        android:src="@drawable/listviewarrow"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_alignParentEnd="true" />-->
+    <!--        android:src="@drawable/listviewarrow"-->
+    <!--        android:layout_alignParentTop="true"-->
+    <!--        android:layout_alignParentRight="true"-->
+    <!--        android:layout_alignParentEnd="true" />-->
 
 
 </RelativeLayout>

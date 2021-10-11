@@ -1,5 +1,6 @@
 package com.example.semicolonapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.semicolonapp.R;
+import com.example.semicolonapp.data.DataHolder;
 import com.example.semicolonapp.data.LoginData;
 import com.example.semicolonapp.data.LoginResponse;
 import com.example.semicolonapp.network.RetrofitClient;
@@ -24,7 +26,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private AutoCompleteTextView mEmail;
+    public AutoCompleteTextView mEmail;
     private EditText mPassword;
     private Button login,register;
     private ProgressBar mProgressView;
@@ -32,10 +34,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private  String email,password; //사용자가 입력한 이메일, 비번
 
+    public static Context context_main; // context 변수 선언
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loginactivity);
+
+        context_main = this;
 
         mEmail = (AutoCompleteTextView) findViewById(R.id.et_loginEmail);
         mPassword = (EditText) findViewById(R.id.et_loginPW);
@@ -65,12 +71,14 @@ public class LoginActivity extends AppCompatActivity {
         register.setOnClickListener(onClickListener);
 
 
+
     }
 
     private void attemptLogin() {
 
         mEmail.setError(null);
         mPassword.setError(null);
+
 
 //        String email = mEmail.getText().toString();
 //        String password = mPassword.getText().toString();
@@ -114,6 +122,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+
+
     private void startLogin(LoginData data) {
         service.userLogin(data).enqueue(new Callback<LoginResponse>() {
             @Override
@@ -123,9 +133,12 @@ public class LoginActivity extends AppCompatActivity {
                 showProgress(false);
 
                 if(result.getCode()== 200){
-                    Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
-                    intent1.putExtra("useremail",email);
-                    startActivity(intent1);
+
+
+                    DataHolder.setUseremail(email);
+                    Intent intent2 = new Intent(LoginActivity.this, AsksmsActivity.class);
+//                    Intent intent2 = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent2);
                 }
 
             }

@@ -2,14 +2,23 @@ package com.example.semicolonapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +31,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.semicolonapp.data.DataHolder;
+import com.example.semicolonapp.data.GetGuardianNumberResponse;
+import com.example.semicolonapp.network.RetrofitClient;
+import com.example.semicolonapp.network.ServiceApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -57,6 +70,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /*참고링크
 (실시간 내 위치 표시)
@@ -88,10 +106,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     ArrayList<String> phone = new ArrayList<>();//휴게소 전화번호
 
     private Button goto_rest_area; //휴게소 보여주는 버튼
-    private Button restarea_info; //휴게소 정보 보여줌
+    //private Button restarea_info; //휴게소 정보 보여줌
 
 
     private ImageButton Home,Report, Map, Music, Setting;
+
+    public TextToSpeech textToSpeech; //TTS
+    int speechStatus;
+    //음성 인식용
+    Intent SttIntent;
+    SpeechRecognizer mRecognizer;
+    TextToSpeech tts;//음성 출력용
+    final int PERMISSION = 1;
+    Context cThis ; // Context 설정
+    private ServiceApi service;//retrofit 관련
+    public String guardianNumber ="";
+
 
 
     @Override
@@ -105,6 +135,40 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Map = (ImageButton)findViewById(R.id.Map);
         Music = (ImageButton)findViewById(R.id.Music);
         Setting = (ImageButton)findViewById(R.id.Setting);
+
+        service = RetrofitClient.getClient().create(ServiceApi.class); //RETROFIT 객체
+
+
+        //Log.i("data!!!", DataHolder.getPhonenumber());
+        getguardiannum(DataHolder.getUseremail());
+
+
+        // 안드로이드 6.0버전 이상인지 체크해서 퍼미션 체크
+        if (Build.VERSION.SDK_INT >= 23) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET,
+                    Manifest.permission.RECORD_AUDIO}, PERMISSION);
+        }
+
+
+        //TTS 객체생성
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status == TextToSpeech.SUCCESS){
+                    int ttsLang = textToSpeech.setLanguage(Locale.KOREAN);
+                    if(ttsLang == TextToSpeech.LANG_MISSING_DATA || ttsLang ==TextToSpeech.LANG_NOT_SUPPORTED){
+                        Log.e("TTS","한국어는 지원되지 않습니다.");
+                    }else{
+                        Log.i("TTS", "한국어 지원");
+                    }
+                    Log.i("TTS","TTS 초기화 성공");
+                }else{
+                    Toast.makeText(getApplicationContext(),"TTS 초기화에 실패하였습니다!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -125,7 +189,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                        startActivity(intent2);
 //                        break;
                     case R.id.Music:
-                        Intent intent3 = new Intent(MapActivity.this, SongActivity.class);
+                        Intent intent3 = new Intent(MapActivity.this, AlarmActivity.class);
                         startActivity(intent3);
                         break;
                     case R.id.Setting:
@@ -146,45 +210,47 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Kakao SDK 초기화
         KakaoSdk.init(this, "feefb8e4372ffe114b0f7aa28978b946");
 
-        goto_rest_area = (Button) findViewById(R.id.goto_restarea_btn);//가까운 휴게소 위치 보여주기 btn
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //누르면 가까운 휴게소가 보이는 곳으로 줌 해줘
-                Toast.makeText(MapActivity.this, "가까운 휴게소 지도에 띄어주기", Toast.LENGTH_SHORT).show();
-
-                //1)현재 위치에서 가장 가까운 휴게소 계산하기 getNearestArea()
-                //getNearstArea()
 
 
-                //2) 휴게소 좌표값(위도,경도) showRestArea에 인자로 넘겨주기
-                showRestArea(latitude.get(5), longitude.get(5), name.get(5), road_type.get(5),road_route_name.get(5),gas_station.get(5),lpg_charge.get(5),electric_charge.get(5),phone.get(5)); //listarray의 첫번째 부터 넘겨주기(임시)
-            }
-        };
-        goto_rest_area.setOnClickListener(listener);
+//        goto_rest_area = (Button) findViewById(R.id.goto_restarea_btn);//가까운 휴게소 위치 보여주기 btn
+//
+//        View.OnClickListener listener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //누르면 가까운 휴게소가 보이는 곳으로 줌 해줘
+//                Toast.makeText(MapActivity.this, "가까운 휴게소 지도에 띄어주기", Toast.LENGTH_SHORT).show();
+//
+//                //1)현재 위치에서 가장 가까운 휴게소 계산하기 getNearestArea()
+//                //getNearstArea()
+//
+//
+//                //2) 휴게소 좌표값(위도,경도) showRestArea에 인자로 넘겨주기
+//                showRestArea(latitude.get(75), longitude.get(75), name.get(75), road_type.get(75),road_route_name.get(75),gas_station.get(75),lpg_charge.get(75),electric_charge.get(75),phone.get(75)); //listarray의 첫번째 부터 넘겨주기(임시)
+//            }
+//        };
+//        goto_rest_area.setOnClickListener(listener);
 
 
         //전국 휴게소들 정보 확인할 수 있는 버튼(임시)
-        restarea_info = (Button) findViewById(R.id.restarea_info_btn);
-        restarea_info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { //인텐트로 arraylist 8개 다 넘겨주기
-                Intent intent = new Intent(MapActivity.this, ServiceAreaInfoActivity.class);
-                intent.putStringArrayListExtra("name", name);
-                intent.putStringArrayListExtra("road_type", road_type);
-                intent.putStringArrayListExtra("road_route_name", road_route_name);
-                //intent.putStringArrayListExtra("latitude",latitude);
-                intent.putExtra("latitude", latitude);
-                intent.putExtra("longitude", longitude);
-                intent.putStringArrayListExtra("gas_station", gas_station);
-                intent.putStringArrayListExtra("lpg_charge", lpg_charge);
-                intent.putStringArrayListExtra("electric_charge", electric_charge);
-                intent.putStringArrayListExtra("phone", phone);
-                startActivity(intent);
-            }
-        });
-
+//        restarea_info = (Button) findViewById(R.id.restarea_info_btn);
+//        restarea_info.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { //인텐트로 arraylist 8개 다 넘겨주기
+//                Intent intent = new Intent(MapActivity.this, ServiceAreaInfoActivity.class);
+//                intent.putStringArrayListExtra("name", name);
+//                intent.putStringArrayListExtra("road_type", road_type);
+//                intent.putStringArrayListExtra("road_route_name", road_route_name);
+//                //intent.putStringArrayListExtra("latitude",latitude);
+//                intent.putExtra("latitude", latitude);
+//                intent.putExtra("longitude", longitude);
+//                intent.putStringArrayListExtra("gas_station", gas_station);
+//                intent.putStringArrayListExtra("lpg_charge", lpg_charge);
+//                intent.putStringArrayListExtra("electric_charge", electric_charge);
+//                intent.putStringArrayListExtra("phone", phone);
+//                startActivity(intent);
+//            }
+//        });
+//
 
         checkMyPermission(); //권한 확인
 
@@ -210,16 +276,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 phone.add(service_area_data.getString("휴게소전화번호"));
 
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        Log.d("MapActivity", "name:"+ name);
-//        Log.d("MapActivity", "road_type:"+ road_type);
-//        Log.d("MapActivity", "road_route_name:"+ road_route_name);
-//        Log.d("MapActivity", "latitude:"+ latitude);
+//
+
+        //3초 늦게 코드 실행시켜주기
+        new Handler().postDelayed(mMyTask,3000);
+
 
     }
+
+    private  Runnable mMyTask = new Runnable() {
+        @Override
+        public void run() {
+            showRestArea(latitude.get(75), longitude.get(75), name.get(75), road_type.get(75),road_route_name.get(75),gas_station.get(75),lpg_charge.get(75),electric_charge.get(75),phone.get(75)); //listarray의 첫번째 부터 넘겨주기(임시)
+        }
+    };
 
     //json 파일 접근하는 메소드
     private String JsonDataFromAsset() {
@@ -357,18 +430,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 info.setOrientation(LinearLayout.VERTICAL);
 
                 //휴게소 명
-                TextView name = new TextView(MapActivity.this);
-                name.setTextColor(Color.BLACK);
-                name.setGravity(Gravity.CENTER);
-                name.setTypeface(null, Typeface.BOLD);
-                name.setText(marker.getTitle());
+                TextView name1 = new TextView(MapActivity.this);
+                name1.setTextColor(Color.BLACK);
+                name1.setGravity(Gravity.CENTER);
+                name1.setTypeface(null, Typeface.BOLD);
+                name1.setText(marker.getTitle());
 
                 TextView road_type = new TextView(MapActivity.this);
                 road_type.setTextColor(Color.GRAY);
                 road_type.setGravity(Gravity.LEFT);
                 road_type.setText(marker.getSnippet());
 
-                info.addView(name);
+                info.addView(name1);
                 info.addView(road_type);
 
                 return info;
@@ -379,26 +452,227 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                makeToast();
-                //Uri uri=  NaviClient.getInstance().navigateWebUrl(new com.kakao.sdk.navi.model.Location("카카오 판교오피스","127.108640", "37.402111"), new NaviOption(CoordType.WGS84, VehicleType.FIRST, RpOption.SHORTEST,true,"127.01611744933815","37.65187803439617"));
-                Uri uri=  NaviClient.getInstance().navigateWebUrl(new com.kakao.sdk.navi.model.Location(name,longitude.toString(), latitude.toString()), new NaviOption(CoordType.WGS84, VehicleType.FIRST, RpOption.SHORTEST,true,currentlocation.getLongitude()+"",currentlocation.getLatitude()+""));
-                Log.e("name: ", name);
-                Log.e("longitude: ", longitude.toString());
-                Log.e("latitude: ", latitude.toString());
-                opennavi(uri);
+                speakCheckInBackground();
             }
         });
-
-
     }
+
+    public void speakCheckInBackground() {
+        textToSpeech.speak(name.get(75) + "휴게소로 길 안내를 해드릴까요? 원하시면 '해줘', 아니면 '됐어' 라고 말해주세요", TextToSpeech.QUEUE_FLUSH, null);
+        new Waiter().execute();
+    }
+
+    class Waiter extends AsyncTask<Void,Void,Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            while (textToSpeech.isSpeaking()){
+                try{Thread.sleep(1000);}catch (Exception e){}
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            //TTS has finished speaking. WRITE YOUR CODE HERE
+            voicedriver();
+        }
+    }
+
+    public void voicedriver(){
+            try {
+                SttIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                SttIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplicationContext().getPackageName());
+                SttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+
+                mRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+                mRecognizer.setRecognitionListener(listener);
+                mRecognizer.startListening(SttIntent); //음성인식이 계속 되는 구문이니 필요에 맞게 쓰시길 바람
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+    }
+
+
+    private RecognitionListener listener = new RecognitionListener() {
+        @Override
+        public void onReadyForSpeech(Bundle params) {
+            // 말하기 시작할 준비가되면 호출
+            Toast.makeText(getApplicationContext(), "음성인식 시작", Toast.LENGTH_SHORT).show();
+            Log.d("tst5", "시작");
+        }
+
+        @Override
+        public void onBeginningOfSpeech() {
+            // 말하기 시작했을 때 호출
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB) {
+            // 입력받는 소리의 크기를 알려줌
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer) {
+            // 말을 시작하고 인식이 된 단어를 buffer에 담음
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+            // 말하기를 중지하면 호출
+        }
+
+        @Override
+        public void onError(int error) {
+            // 네트워크 또는 인식 오류가 발생했을 때 호출
+            String message;
+
+            switch (error) {
+                case SpeechRecognizer.ERROR_AUDIO:
+                    message = "오디오 에러";
+                    break;
+                case SpeechRecognizer.ERROR_CLIENT:
+                    message = "클라이언트 에러";
+                    break;
+                case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                    message = "퍼미션 없음";
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK:
+                    message = "네트워크 에러";
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                    message = "네트웍 타임아웃";
+                    break;
+                case SpeechRecognizer.ERROR_NO_MATCH:
+                    message = "찾을 수 없음";
+                    break;
+                case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                    message = "RECOGNIZER 가 바쁨";
+                    break;
+                case SpeechRecognizer.ERROR_SERVER:
+                    message = "서버가 이상함";
+                    break;
+                case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                    message = "말하는 시간초과";
+                    break;
+                default:
+                    message = "알 수 없는 오류임";
+                    break;
+            }
+
+            //Toast.makeText(getApplicationContext(), "에러 발생 : " + message, Toast.LENGTH_SHORT).show();
+            Log.d("tst5", "onError: " + message);
+        }
+
+        @Override
+        public void onResults(Bundle results) {
+            String key = "";
+            key = SpeechRecognizer.RESULTS_RECOGNITION;
+            ArrayList<String> mResult = results.getStringArrayList(key);
+            String[] rs = new String[mResult.size()];
+            mResult.toArray(rs);
+
+            Log.i("STT", "입력값: " + rs[0]);
+            FuncVoiceOrderCheck(rs[0]);
+        }
+
+        private void FuncVoiceOrderCheck(String VoiceMsg){
+            if(VoiceMsg.length()<1) return;
+
+            VoiceMsg = VoiceMsg.replace(" ", "");//공백제거
+
+            if(VoiceMsg.indexOf("해줘") > -1 || VoiceMsg.indexOf("해") > -1){
+                Toast.makeText(MapActivity.this, VoiceMsg,Toast.LENGTH_SHORT).show();
+                Log.e("Voice",VoiceMsg);
+
+                //길안내 한다는 TTS
+                speechStatus = textToSpeech.speak("네, 알겠습니다. 휴게소로 길안내를 시작합니다.",TextToSpeech.QUEUE_FLUSH,null);
+                if(speechStatus == TextToSpeech.ERROR){
+                    Log.e("TTS","텍스트를 음성으로 변환하는 중 오류 발생");
+                }
+
+                if(DataHolder.getIsSendSMS().equals("true")){  //Asksmsactvitiy에서 보낸다, 로 채크할 경우에만 보호자에게 문자보내기
+                    //보호자에게 문자하기
+                    try {
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(guardianNumber, null, "운전자에게 졸음이 감지되어 "+name.get(75)+" 휴게소로 이동중입니다. \n -Deep Awake", null, null);
+                        Toast.makeText(getApplicationContext(), "보호자에게 문자가 발송되었습니다.", Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "문자 전송 실패!", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+
+
+                //네비로 이동하기
+                makeToast();
+                startnavi();
+            }
+
+            if(VoiceMsg.indexOf("됐어") > -1 || VoiceMsg.indexOf("싫어") > -1){
+                Log.e("Voice",VoiceMsg);
+                Toast.makeText(MapActivity.this,VoiceMsg,Toast.LENGTH_SHORT).show();
+                //길안내 한다는 TTS
+                speechStatus = textToSpeech.speak("네, 알겠습니다. 졸지 말고 운전해주세요. ",TextToSpeech.QUEUE_FLUSH,null);
+                if(speechStatus == TextToSpeech.ERROR){
+                    Log.e("TTS","텍스트를 음성으로 변환하는 중 오류 발생");
+                }
+                finish();
+            }
+        }
+
+        @Override
+        public void onPartialResults(Bundle partialResults) {
+            // 부분 인식 결과를 사용할 수 있을 때 호출
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params) {
+            // 향후 이벤트를 추가하기 위해 예약
+        }
+    };
+
+
+    public void startnavi(){
+        Uri uri=  NaviClient.getInstance().navigateWebUrl(new com.kakao.sdk.navi.model.Location(name.get(75),longitude.get(75).toString(), latitude.get(75).toString()), new NaviOption(CoordType.WGS84, VehicleType.FIRST, RpOption.SHORTEST,true,currentlocation.getLongitude()+"",currentlocation.getLatitude()+""));
+        opennavi(uri);
+    }
+
 
     private void opennavi(Uri uri) {
         KakaoCustomTabsClient.INSTANCE.open(this,uri);
     }
 
     private void makeToast() {
-        Toast.makeText(this, "navi로 이동합니다",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "navi로 " +name.get(75) +" 휴게소로 이동합니다",Toast.LENGTH_SHORT).show();
     }
+
+
+
+    //mapactivity시작할 떄 사용자 이메일로 보호자 번호 가져오기
+    public void getguardiannum(String useremail){
+        service.getGuardianNumber(useremail).enqueue(new Callback<GetGuardianNumberResponse>() {
+            @Override
+            public void onResponse(Call<GetGuardianNumberResponse> call, Response<GetGuardianNumberResponse> response) {
+                GetGuardianNumberResponse result = response.body();
+                Log.d("message", "" + result.getMessage());
+
+                if(result.getCode() ==200){
+                    guardianNumber = result.getGuardiannumber();
+                    Log.d("보호자 번호", "" + result.getGuardiannumber());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetGuardianNumberResponse> call, Throwable t) {
+                Log.e("보호자 번호 가져오기 실패", t.getMessage());
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+
 
 
 

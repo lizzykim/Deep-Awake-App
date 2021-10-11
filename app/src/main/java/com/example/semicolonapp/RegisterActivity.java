@@ -1,5 +1,6 @@
 package com.example.semicolonapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.semicolonapp.R;
+import com.example.semicolonapp.data.DataHolder;
 import com.example.semicolonapp.data.RegisterData;
 import com.example.semicolonapp.data.RegisterResponse;
 import com.example.semicolonapp.network.RetrofitClient;
@@ -24,10 +26,14 @@ import retrofit2.Response;
 public class RegisterActivity extends AppCompatActivity {
 
     private AutoCompleteTextView mEmail;
-    private EditText mPw,mName,mAge;
+    private EditText mPw,mName,mAge, mGN;
     private Button register;
     private ProgressBar mProgressView;
     private ServiceApi service;
+
+    String email,password,name,age,guardiannumber;
+
+
 
 
     @Override
@@ -39,6 +45,8 @@ public class RegisterActivity extends AppCompatActivity {
         mPw = (EditText)findViewById(R.id.et_pass);
         mName = (EditText)findViewById(R.id.et_name);
         mAge = (EditText)findViewById(R.id.et_age);
+        mGN = (EditText)findViewById(R.id.et_guardnum);
+
         register = (Button)findViewById(R.id.btn_register);
         mProgressView = (ProgressBar) findViewById(R.id.register_progress);
 
@@ -59,12 +67,15 @@ public class RegisterActivity extends AppCompatActivity {
         mPw.setError(null); //null들어가면 에러라고 사용자에게 알려줌
         mName.setError(null); //null들어가면 에러라고 사용자에게 알려줌
         mAge.setError(null); //null들어가면 에러라고 사용자에게 알려줌
+        mGN.setError(null); //null들어가면 에러라고 사용자에게 알려줌
+
         register.setError(null); //null들어가면 에러라고 사용자에게 알려줌
 
-        String email = mEmail.getText().toString();
-        String password = mPw.getText().toString();
-        String name = mName.getText().toString();
-        String age = mAge.getText().toString();
+        email = mEmail.getText().toString();
+        password = mPw.getText().toString();
+        name = mName.getText().toString();
+        age = mAge.getText().toString();
+        guardiannumber = mGN.getText().toString();
 
         boolean cancel = false;
         View focusView = null; //현재 초점맞춰야하는 뷰
@@ -106,11 +117,19 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
+        // 나이 유효성 검사
+        if (guardiannumber.isEmpty()) {
+            mGN.setError("이름을 입력해주세요.");
+            focusView = mAge;
+            cancel = true;
+        }
+
+
         if(cancel){ //cancel=true일때 포커스 실시
             focusView.requestFocus();
         }else{
             //핵심 기능
-            startRegister( new RegisterData(email,password,name,age));
+            startRegister(new RegisterData(email,password,name,age,guardiannumber));
             showProgress(true);
         }
 
@@ -128,6 +147,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if(result.getCode()==200){
                     finish();
+
+//                    Intent intent = new Intent(RegisterActivity.this, SmsActivity.class);
+//                    startActivity(intent);
+
                 }
             }
 

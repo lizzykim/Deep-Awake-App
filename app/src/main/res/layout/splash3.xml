@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="820dp"
+    android:paddingTop="16dp"
+    tools:context=".splash3"
+    android:orientation="vertical"
+    android:gravity="center_vertical|center_horizontal"
+    android:background="@color/white"
+    android:weightSum="1">
+
+    <ImageView
+        android:layout_width="462dp"
+        android:layout_height="372dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/head" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textColor="@color/black"
+        android:layout_marginBottom="0dp"
+        android:text="착용 완료!\n\n자, 이제 운전해 볼까요?"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
+    <RelativeLayout
+        android:layout_width="360dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="80dp">
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/bt_splashNext3"
+            android:background="@drawable/arrownext_foreground"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/bt_splashBefore3"
+            android:clickable="true"
+            android:background="@drawable/arrowback_foreground"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+
+</LinearLayout>

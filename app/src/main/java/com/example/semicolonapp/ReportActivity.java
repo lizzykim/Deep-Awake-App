@@ -7,11 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.semicolonapp.adapter.ReportAdapter;
+import com.example.semicolonapp.data.DataHolder;
+import com.example.semicolonapp.data.GetNameResponse;
 import com.example.semicolonapp.data.ReportItemArrayData;
 import com.example.semicolonapp.data.ReportItemData;
 import com.example.semicolonapp.data.ReportItemResponse;
@@ -30,6 +33,7 @@ public class ReportActivity extends AppCompatActivity {
 
     ListView lv_view;
     TextView username; //사용자 이름
+    String useremail ="";
 
     ReportItemData data;
     ArrayList<ReportItemData> ItemsArrays= new ArrayList<ReportItemData>();
@@ -46,6 +50,8 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reportactivity);
 
+
+
         username=(TextView)findViewById(R.id.rp_user_name); //사용자 이름 참조
         lv_view = (ListView)findViewById(R.id.listView); //listview 참조
 
@@ -56,9 +62,15 @@ public class ReportActivity extends AppCompatActivity {
 //        ItemsArrays.add(new ReportItemData("8월 10일","여수","33"));
 //        ItemsArrays.add(new ReportItemData("8월 11일","강릉","32"));
 
+
+        Log.i("DataHolder", DataHolder.getUseremail());
         service = RetrofitClient.getClient().create(ServiceApi.class);
 
-        getReportDataFromDB();//reportItems로 db에서 데이터 받는 메서드
+
+        showUserName(DataHolder.getUseremail()); //메인 화면 들어올때 username SQL,RETROFIT2 으로 받아오는 코드, 사용자 이름 보여줌//
+
+        //getReportDataFromDB();//reportItems로 db에서 데이터 받는 메서드
+        getReportDataFromDB(DataHolder.getUseremail());//reportItems로 db에서 데이터 받는 메서드
 
         adapter = new ReportAdapter(this,ItemsArrays);
         lv_view.setAdapter(adapter);
@@ -100,10 +112,38 @@ public class ReportActivity extends AppCompatActivity {
 
     }
 
+    //RETROFIT 2이용해서  이메일 이용하여 사용자이름 받아노는 메소드
+    private void showUserName(String data) {
+        service.getName(data).enqueue(new Callback<GetNameResponse>() {
+            @Override
+            public void onResponse(Call<GetNameResponse> call, Response<GetNameResponse> response) {
+                GetNameResponse result = response.body();
+                Log.d("message", ""+result.getMessage());
+
+                if(result.getCode() == 200){
+                    //~님 환영합니다 라고 써주기
+                    username.setText(result.getUsername()+"님 운전 리포트");
+                    Log.d("Username", ""+result.getUsername());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GetNameResponse> call, Throwable t) {
+                Log.e("사용자 이름 가져오기 에러 발생", t.getMessage());
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+
     //reportItems로 db에서 데이터 받는 메서드
-    //private ArrayList<ReportItemData> getReportDataFromDB() {
-    private void getReportDataFromDB() {
-        service.getReportRecord().enqueue(new Callback<ReportItemArrayData>() {
+
+//    private void getReportDataFromDB() {
+//        service.getReportRecord().enqueue(new Callback<ReportItemArrayData>() {
+            private void getReportDataFromDB(String useremail) {
+                service.getReportRecord(useremail).enqueue(new Callback<ReportItemArrayData>() {
             @Override
             public void onResponse(Call<ReportItemArrayData> call, Response<ReportItemArrayData> response) {
                 //nodejs 하고 작성하기
@@ -120,7 +160,7 @@ public class ReportActivity extends AppCompatActivity {
 //                    Log.d("message", ""+result.getPm10Value());
 //                    Log.d("message", ""+result.getPm10Grade());
 
-                    for( int i =0 ;i<result.getLat().size() ;i++){
+                    for( int i =0 ;i<result.getLat().size() ;i++){ //null에러뜸
                         data = new ReportItemData();
 
                         data.setLat(result.getLat().get(i));
@@ -143,9 +183,6 @@ public class ReportActivity extends AppCompatActivity {
                         data.setCoGrade(result.getCoGrade().get(i));
                         data.setO3Grade(result.getO3Grade().get(i));
                         data.setNo2Grade(result.getNo2Grade().get(i));
-
-
-
 
                         ItemsArrays.add(data);
 

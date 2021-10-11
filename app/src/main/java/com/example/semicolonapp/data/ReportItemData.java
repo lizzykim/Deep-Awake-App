@@ -4,6 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class ReportItemData {
 
+    //추가
+    @SerializedName("useremail")
+    public String useremail;
+
     @SerializedName("lat")
     public String lat;
 
@@ -86,7 +90,8 @@ public class ReportItemData {
         this.humidity = humidity;
     }
 
-    public ReportItemData(String lat, String lon, String datentime, String location, String weather, String temperature, String humidity, String pm10Value, String pm25Value, String so2Value, String coValue, String o3Value, String no2Value, String pm10Grade, String pm25Grade, String so2Grade, String coGrade, String o3Grade, String no2Grade) {
+    public ReportItemData(String useremail,String lat, String lon, String datentime, String location, String weather, String temperature, String humidity, String pm10Value, String pm25Value, String so2Value, String coValue, String o3Value, String no2Value, String pm10Grade, String pm25Grade, String so2Grade, String coGrade, String o3Grade, String no2Grade) {
+        this.useremail = useremail;
         this.lat = lat;
         this.lon = lon;
         this.datentime = datentime;
@@ -107,6 +112,8 @@ public class ReportItemData {
         this.o3Grade = o3Grade;
         this.no2Grade = no2Grade;
     }
+
+
 
     @Override
     public String toString() {

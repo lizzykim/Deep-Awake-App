@@ -3,6 +3,8 @@ package com.example.semicolonapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.sip.SipSession;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,21 +34,55 @@ public class ReportDetailActivity extends AppCompatActivity implements OnMapRead
     Double latitude,longitude;
     TextView tv_date,tv_location,tv_weather,tv_temperature,tv_humidity;
     TextView tv_pm10value,tv_pm25value,tv_so2value,tv_covalue,tv_o3value,tv_no2value,tv_pm10grade,tv_pm25grade,tv_so2grade,tv_cograde,tv_o3grade,tv_no2grade;
+    ImageView icon_pm10grade, icon_pm25grade, icon_so2grade, icon_cograde,icon_o3grade, icon_no2grade;
     GoogleMap map;
     Location location;
+
+    private ImageButton Home,Report, Map, Music, Setting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reportdetailactivity);
+        //액티비티 이동 버튼 관련 코드
+        Home = (ImageButton)findViewById(R.id.Home);
+        Report = (ImageButton)findViewById(R.id.Report);
+        Map = (ImageButton)findViewById(R.id.Map);
+        Music = (ImageButton)findViewById(R.id.Music);
+        Setting = (ImageButton)findViewById(R.id.Setting);
 
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.Home:
+                        Intent intent1 = new Intent(ReportDetailActivity.this, MainActivity.class);
+                        startActivity(intent1);
+                        break;
+                    case R.id.Map:
+                        Intent intent2 = new Intent(ReportDetailActivity.this, MapActivity.class);
+                        startActivity(intent2);
+                        break;
+                    case R.id.Music:
+                        Intent intent3 = new Intent(ReportDetailActivity.this, AlarmActivity.class);
+                        startActivity(intent3);
+                        break;
+                    case R.id.Setting:
+                        Intent intent4 = new Intent(ReportDetailActivity.this, SettingActivity.class);
+                        startActivity(intent4);
+                        break;
+                }
+            }
+        };
+
+        Home.setOnClickListener(onClickListener);
+        Map.setOnClickListener(onClickListener);
+        Music.setOnClickListener(onClickListener);
+        Setting.setOnClickListener(onClickListener);
         init();
-
-
     }
 
     void init(){
-
         //xml 주소 참조
         tv_date = (TextView)findViewById(R.id.date);
         tv_location = (TextView)findViewById(R.id.location);
@@ -59,14 +96,19 @@ public class ReportDetailActivity extends AppCompatActivity implements OnMapRead
         tv_covalue= (TextView)findViewById(R.id.coValue);
         tv_o3value= (TextView)findViewById(R.id.o3Value);
         tv_no2value = (TextView)findViewById(R.id.no2Value);
-        tv_pm10grade = (TextView)findViewById(R.id.pm10Grade);
-        tv_pm25grade= (TextView)findViewById(R.id.pm25Grade);
-        tv_so2grade= (TextView)findViewById(R.id.so2Grade);
-        tv_cograde= (TextView)findViewById(R.id.coGrade);
-        tv_o3grade= (TextView)findViewById(R.id.o3Grade);
-        tv_no2grade= (TextView)findViewById(R.id.no2Grade);
+//        tv_pm10grade = (TextView)findViewById(R.id.pm10Grade);
+//        tv_pm25grade= (TextView)findViewById(R.id.pm25Grade);
+//        tv_so2grade= (TextView)findViewById(R.id.so2Grade);
+//        tv_cograde= (TextView)findViewById(R.id.coGrade);
+//        tv_o3grade= (TextView)findViewById(R.id.o3Grade);
+//        tv_no2grade= (TextView)findViewById(R.id.no2Grade);
 
-
+        icon_pm10grade = (ImageView)findViewById(R.id.icon_pm10);
+        icon_pm25grade = (ImageView)findViewById(R.id.icon_pm25);
+        icon_so2grade = (ImageView)findViewById(R.id.icon_so2);
+        icon_cograde = (ImageView)findViewById(R.id.icon_co);
+        icon_o3grade = (ImageView)findViewById(R.id.icon_o3);
+        icon_no2grade = (ImageView)findViewById(R.id.icon_no2);
 
         //intent로 data전달 받기
         date = getIntent().getStringExtra("date");
@@ -91,18 +133,14 @@ public class ReportDetailActivity extends AppCompatActivity implements OnMapRead
         o3grade = getIntent().getStringExtra("o3Grade");
         no2grade = getIntent().getStringExtra("no2Grade");
 
-
-
-
         Log.i("위도",latitude+","+longitude);
 
-
         //뷰에 뿌려주기
-        tv_date.setText("일자: "+date);
-        tv_location.setText("위치: "+address);
+        tv_date.setText(date);
+        tv_location.setText(address);
         tv_weather.setText(weather);
-        tv_temperature.setText("온도 " +temperature +"ºC");
-        tv_humidity.setText("습도 "+humidity+"%");
+        tv_temperature.setText(temperature +"ºC");
+        tv_humidity.setText(humidity+"%");
 
         tv_pm10value.setText("미세먼지 "+pm10value +"㎍/㎥");
         tv_pm25value.setText("초미세먼지 "+pm25value +"㎍/㎥");
@@ -132,100 +170,123 @@ public class ReportDetailActivity extends AppCompatActivity implements OnMapRead
         switch (pm10grade){
                 case "1":
                     pm10grade ="좋음";
+                    icon_pm10grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_smile));
                     break;
                 case "2":
                     pm10grade ="보통";
+                    icon_pm10grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_soso));
                     break;
                 case "3":
                     pm10grade ="나쁨";
+                    icon_pm10grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_bad));
                     break;
                 case "4":
                     pm10grade ="매우 나쁨";
+                    icon_pm10grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_cry));
                     break;
             }
 
         switch (pm25grade){
             case "1":
                 pm25grade ="좋음";
+                icon_pm25grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_smile));
                 break;
             case "2":
                 pm25grade ="보통";
+                icon_pm25grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_soso));
                 break;
             case "3":
                 pm25grade ="나쁨";
+                icon_pm25grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_bad));
                 break;
             case "4":
                 pm25grade ="매우 나쁨";
+                icon_pm25grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_cry));
                 break;
         }
 
         switch (so2grade){
             case "1":
                 so2grade ="좋음";
+                icon_so2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_smile));
                 break;
             case "2":
                 so2grade ="보통";
+                icon_so2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_soso));
                 break;
             case "3":
                 so2grade ="나쁨";
+                icon_so2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_bad));
                 break;
             case "4":
                 so2grade ="매우 나쁨";
+                icon_so2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_cry));
                 break;
         }
 
         switch (cograde){
             case "1":
                 cograde ="좋음";
+                icon_cograde.setImageDrawable(getResources().getDrawable(R.drawable.ic_smile));
                 break;
             case "2":
                 cograde ="보통";
+                icon_cograde.setImageDrawable(getResources().getDrawable(R.drawable.ic_soso));
                 break;
             case "3":
                 cograde ="나쁨";
+                icon_cograde.setImageDrawable(getResources().getDrawable(R.drawable.ic_bad));
                 break;
             case "4":
                 cograde ="매우 나쁨";
+                icon_cograde.setImageDrawable(getResources().getDrawable(R.drawable.ic_cry));
                 break;
         }
 
         switch (o3grade){
             case "1":
                 o3grade ="좋음";
+                icon_o3grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_smile));
                 break;
             case "2":
                 o3grade ="보통";
+                icon_o3grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_soso));
                 break;
             case "3":
                 o3grade ="나쁨";
+                icon_o3grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_bad));
                 break;
             case "4":
                 o3grade ="매우 나쁨";
+                icon_o3grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_cry));
                 break;
         }
 
         switch (no2grade){
             case "1":
                 no2grade ="좋음";
+                icon_no2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_smile));
                 break;
             case "2":
                 no2grade ="보통";
+                icon_no2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_soso));
                 break;
             case "3":
                 no2grade ="나쁨";
+                icon_no2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_bad));
                 break;
             case "4":
                 no2grade ="매우 나쁨";
+                icon_no2grade.setImageDrawable(getResources().getDrawable(R.drawable.ic_cry));
                 break;
         }
 
-        tv_pm10grade.setText(pm10grade);
-        tv_pm25grade.setText(pm25grade);
-        tv_so2grade.setText(so2grade);
-        tv_cograde.setText(cograde);
-        tv_o3grade.setText(o3grade);
-        tv_no2grade.setText(no2grade);
-
+//        tv_pm10grade.setText(pm10grade);
+//        tv_pm25grade.setText(pm25grade);
+//        tv_so2grade.setText(so2grade);
+//        tv_cograde.setText(cograde);
+//        tv_o3grade.setText(o3grade);
+//        tv_no2grade.setText(no2grade);
 
         //xml에서 구글맵 객체가져오기
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -242,12 +303,10 @@ public class ReportDetailActivity extends AppCompatActivity implements OnMapRead
 //        String locationProvider = LocationManager.NETWORK_PROVIDER;
 //          location=lm.getLastKnownLocation(locationProvider);
 
-
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         googleMap.moveCamera(CameraUpdateFactory.newLatLng( new LatLng(latitude,longitude)));
         CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom( new LatLng(latitude,longitude),16);
         googleMap.animateCamera(zoom);
@@ -258,16 +317,11 @@ public class ReportDetailActivity extends AppCompatActivity implements OnMapRead
         options.title("졸음발생지역");
         googleMap.addMarker(options);
         Log.i("위도",latitude+","+longitude);
-
-
     }
-
 
     @Override
     public void onBackPressed(){
         Toast.makeText(this, "Back button pressed.", Toast.LENGTH_SHORT).show();
         super.onBackPressed();
     }
-
-
 }

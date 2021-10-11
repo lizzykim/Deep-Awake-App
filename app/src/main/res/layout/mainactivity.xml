@@ -37,7 +37,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Deep Awake"
@@ -53,7 +52,7 @@
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             android:textColor="@color/white"
-            android:textSize="30dp" />
+            android:textSize="20dp" />
 
     </LinearLayout>
     <View
@@ -78,283 +77,165 @@
         app:layout_constraintVertical_bias="0.0"
         tools:layout_editor_absoluteX="-69dp">
 
-
         <View
             android:id="@+id/weather_cardView"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/weather_background"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.9"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/pin"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="55dp"
+            app:layout_constraintStart_toEndOf="@+id/curr_temp"
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
+            app:srcCompat="@drawable/ic_pin" />
+
+        <TextView
+            android:id="@+id/curr_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="55dp"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/pin"
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView" />
 
         <TextView
             android:id="@+id/curr_temp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.087"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.061" />
-
+            android:textSize="30dp"
+            app:layout_constraintStart_toStartOf="@+id/weather_cardView"
+            app:layout_constraintTop_toBottomOf="@+id/curr_weather" />
 
         <TextView
             android:id="@+id/max_temp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/curr_temp"
-            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
-            app:layout_constraintHorizontal_bias="0.167"
-            app:layout_constraintStart_toStartOf="@+id/weather_cardView"
-            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
-            app:layout_constraintVertical_bias="1.0" />
+            android:textSize="12dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toStartOf="@+id/curr_temp"
+            app:layout_constraintTop_toBottomOf="@+id/curr_temp" />
 
         <TextView
             android:id="@+id/wind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
             android:textColor="@color/white"
-            android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
-            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
-            app:layout_constraintHorizontal_bias="0.539"
-            app:layout_constraintStart_toEndOf="@+id/curr_weather"
-            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
-            app:layout_constraintVertical_bias="0.752" />
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/wind_pic"
+            app:layout_constraintTop_toBottomOf="@+id/humidity" />
+
+        <ImageView
+            android:id="@+id/wind_pic"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/humidity_pic"
+            app:layout_constraintTop_toBottomOf="@+id/humidity_pic"
+            app:srcCompat="@drawable/ic_wind" />
 
         <TextView
             android:id="@+id/humidity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
             android:textColor="@color/white"
-            android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
-            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
-            app:layout_constraintHorizontal_bias="0.612"
-            app:layout_constraintStart_toStartOf="@+id/curr_weather"
-            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
-            app:layout_constraintVertical_bias="0.311" />
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/humidity_pic"
+            app:layout_constraintTop_toBottomOf="@+id/curr_location" />
+
+        <ImageView
+            android:id="@+id/humidity_pic"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@+id/curr_location"
+            app:layout_constraintTop_toBottomOf="@+id/curr_location"
+            app:srcCompat="@drawable/ic_humidity" />
 
         <TextView
             android:id="@+id/curr_weather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
             android:textColor="@color/white"
             android:textSize="15dp"
-            app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
-            app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
-            app:layout_constraintHorizontal_bias="0.365"
-            app:layout_constraintStart_toStartOf="@+id/min_temp"
-            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
-            app:layout_constraintVertical_bias="0.492" />
+            app:layout_constraintStart_toStartOf="@+id/weather_cardView"
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView" />
 
         <TextView
             android:id="@+id/min_temp"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
             android:textColor="@color/white"
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/max_temp"
+            app:layout_constraintTop_toBottomOf="@+id/curr_temp" />
+        <!--
+                <ImageView
+                    android:id="@+id/compass_pic"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintStart_toEndOf="@+id/humidity"
+                    app:layout_constraintTop_toBottomOf="@+id/curr_location"
+                    app:srcCompat="@drawable/ic_compass" />
+
+
+                <TextView
+                    android:id="@+id/longitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="4dp"
+                    android:hint="longitude"
+                    android:textSize="10dp"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toStartOf="@+id/latitude"
+                    app:layout_constraintTop_toBottomOf="@+id/latitude" />
+
+                <TextView
+                    android:id="@+id/latitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:hint="latitude"
+                    android:textSize="10dp"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toEndOf="@+id/compass_pic"
+                    app:layout_constraintTop_toBottomOf="@+id/curr_location" />
+        -->
+        <ImageView
+            android:id="@+id/weather_pic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="2dp"
             app:layout_constraintBottom_toBottomOf="@+id/weather_cardView"
             app:layout_constraintEnd_toEndOf="@+id/weather_cardView"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/max_temp"
-            app:layout_constraintTop_toBottomOf="@+id/max_temp"
-            app:layout_constraintVertical_bias="0.311" />
-
-        <TextView
-            android:id="@+id/longitude"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="longitude"
-            android:textSize="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.321"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="197dp" />
-
-        <TextView
-            android:id="@+id/latitude"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="laditude"
-            android:textSize="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.323"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="16dp" />
-
-<!--잠시 가져옴-->
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/layoutGraphView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
-<!--            &lt;!&ndash; Status monitoring layout &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:id="@+id/layout_monitoring"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:orientation="vertical"-->
-<!--                >-->
-
-<!--                &lt;!&ndash; Tab menu &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="5dip"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:gravity="right|top"-->
-<!--                    >-->
-<!--                </LinearLayout>-->
-
-<!--                &lt;!&ndash; Connection info &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/layout_conn"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="5dip"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    >-->
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="@string/title_conn"-->
-<!--                        android:textColor="#ffffff"-->
-<!--                        android:textStyle="bold"-->
-<!--                        android:textSize="14sp" />-->
-<!--                    <TextView-->
-<!--                        android:id="@+id/text_conn"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:textColor="#ffffff"-->
-<!--                        android:textSize="12sp" />-->
-<!--                    <ImageView-->
-<!--                        android:layout_width="30dp"-->
-<!--                        android:layout_height="30dp"-->
-<!--                        android:id="@+id/bt_dialog2"-->
-<!--                        android:background="@drawable/dialog_icon" />-->
-<!--                </LinearLayout>-->
-
-
-<!--                &lt;!&ndash; Rendering frequency &ndash;&gt;-->
-<!--                <TextView-->
-<!--                    android:id="@+id/text_title_render1"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="5dip"-->
-<!--                    android:text="@string/title_freq"-->
-<!--                    android:textColor="#ffffff"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="12sp" />-->
-<!--                <view class="com.example.semicolonapp.RenderingView"-->
-<!--                    android:id="@+id/layout_raw"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="500px"-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:background="#ffffff" >-->
-<!--                </view>-->
-<!--                <TextView-->
-<!--                    android:id="@+id/text_freq_desc"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="5dip"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="10sp"-->
-<!--                    android:background="#ffffff" />-->
-
-
-<!--                &lt;!&ndash; Rendering analyzed value &ndash;&gt;-->
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="5dip"-->
-<!--                    android:text="@string/title_value"-->
-<!--                    android:textColor="#ffffff"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="12sp" />-->
-<!--                <view class="com.example.semicolonapp.RenderingView"-->
-<!--                    android:id="@+id/layout_value"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="250px"-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:background="#ffffff" >-->
-<!--                </view>-->
-<!--                <TextView-->
-<!--                    android:id="@+id/text_value_desc"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="5dip"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="10sp"-->
-<!--                    android:background="#ffffff" />-->
-
-
-<!--                &lt;!&ndash;&lt;!&ndash; System info &ndash;&gt;&ndash;&gt;-->
-<!--                &lt;!&ndash;<LinearLayout&ndash;&gt;-->
-<!--                &lt;!&ndash;android:id="@+id/layout_system_info"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:padding="5dip"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:orientation="horizontal"&ndash;&gt;-->
-<!--                &lt;!&ndash;>&ndash;&gt;-->
-<!--                &lt;!&ndash;<TextView&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:text="@string/title_sys_info"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:textColor="#ffffff"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:textSize="12sp" />&ndash;&gt;-->
-<!--                &lt;!&ndash;<TextView&ndash;&gt;-->
-<!--                &lt;!&ndash;android:id="@+id/text_system"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:textColor="#ffffff"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:textSize="12sp" />&ndash;&gt;-->
-<!--                &lt;!&ndash;</LinearLayout>&ndash;&gt;-->
-
-
-<!--            </LinearLayout>-->
-
-
-<!--            &lt;!&ndash; Controller layout &ndash;&gt;-->
-<!--            &lt;!&ndash; Status monitoring layout &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:id="@+id/layout_controller"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:orientation="vertical"-->
-<!--                >-->
-
-<!--                &lt;!&ndash; Tab menu &ndash;&gt;-->
-
-<!--                &lt;!&ndash; Control buttons &ndash;&gt;-->
-
-
-<!--                &lt;!&ndash; Connection info &ndash;&gt;-->
-<!--                <ScrollView-->
-<!--                    android:id="@+id/layout_logs"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent">-->
-<!--                    <TextView-->
-<!--                        android:id="@+id/text_logs"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:textColor="#ffffff"-->
-<!--                        android:textSize="10sp"-->
-<!--                        />-->
-<!--                </ScrollView>-->
-
-
-<!--            </LinearLayout>-->
-
-<!--        </RelativeLayout>-->
-
-<!--잠시 가져옴-->
+            app:layout_constraintTop_toTopOf="@+id/weather_cardView"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/layout_monitoring"
@@ -365,40 +246,48 @@
             app:layout_constraintTop_toBottomOf="@id/weather_cardView">
             <!-- Connection info -->
             <LinearLayout
-                android:background="@color/black"
                 android:id="@+id/layout_conn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dip"
+                android:background="@drawable/main_eegedge"
                 android:orientation="horizontal"
-                >
+                android:padding="5dip">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/title_conn"
+                    android:text="• 헤드셋 연결 상태 :"
+                    android:paddingLeft="8dp"
                     android:textColor="#ffffff"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
+                <!--                    android:textStyle="bold" -->
+
                 <TextView
                     android:id="@+id/text_conn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="4dp"
                     android:textColor="#ffffff"
                     android:textSize="12sp" />
 
             </LinearLayout>
             <!--연결 강도-->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/black">
+                android:background="#FF203293"
+                android:padding="5dip">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" 연결 강도 :"
+                    android:text="• 연결 강도 :"
+                    android:paddingLeft="8dp"
                     android:textColor="#ffffff"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
+                <!--                    android:textStyle="bold" />-->
+
                 <TextView
                     android:id="@+id/text_conn_strength"
                     android:layout_width="wrap_content"
@@ -412,78 +301,93 @@
                 android:id="@+id/text_title_render1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="@string/title_freq"
+                android:background="#FF203293"
+                android:paddingLeft="14dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="뇌파 주파수를 분석 중입니다."
                 android:textColor="#ffffff"
-                android:background="@color/black"
                 android:textStyle="bold"
                 android:textSize="12dp" />
 
-            <view class="com.example.semicolonapp.RenderingView"
+            <view
                 android:id="@+id/layout_raw"
+                class="com.example.semicolonapp.RenderingView"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:orientation="vertical"
-                android:background="@color/colorLayerSemiDark" >
-            </view>
+                android:layout_height="120dp"
+                android:background="@drawable/edge"
+                android:orientation="vertical"></view>
+            <!--android:background="@color/colorLayerSemiDark"-->
 
             <TextView
                 android:id="@+id/text_freq_desc"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:padding="5dp"
-                android:textStyle="bold"
+                android:paddingLeft="14dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:textSize="10dp"
-                android:background="@color/colorLayerSemiDark" />
+                android:textStyle="bold" />
             <!-- Rendering analyzed value -->
+
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_eegedge"
                 android:text="@string/title_value"
-                android:background="@color/black"
+                android:paddingLeft="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:textColor="#ffffff"
-                android:textStyle="bold"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:textStyle="bold" />
 
-<!--            <view class="com.example.semicolonapp.RenderingView"-->
-<!--                android:id="@+id/layout_value"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:orientation="vertical"-->
-<!--                android:background="@color/colorLayerSemiDark" >-->
-<!--            </view>-->
-            <view class="com.example.semicolonapp.RenderingView"
+            <!--            <view class="com.example.semicolonapp.RenderingView"-->
+            <!--                android:id="@+id/layout_value"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="50dp"-->
+            <!--                android:orientation="vertical"-->
+            <!--                android:background="@color/colorLayerSemiDark" >-->
+            <!--            </view>-->
+
+            <view
                 android:id="@+id/layout_value"
+                class="com.example.semicolonapp.RenderingView"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="vertical"
-                android:background="@color/colorLayerSemiDark" >
-            </view>
+                android:layout_height="70dp"
+                android:background="@drawable/edge"
+                android:orientation="vertical"></view>
+
             <TextView
                 android:id="@+id/text_value_desc"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:padding="5dp"
-                android:textStyle="bold"
+                android:paddingLeft="14dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:textSize="10dp"
-                android:background="@color/colorLayerSemiDark" />
+                android:textStyle="bold" />
+
+<!--                        <Button-->
+<!--                            android:id="@+id/sleep_check"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="졸음 체크"-->
+<!--                            android:backgroundTint="#FF203293"/>-->
 
             <Button
-                android:id="@+id/sleep_check"
-                android:text="졸음 체크"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:id="@+id/startend_btn"
+                android:text="운전 시작"
+                android:textColor="@color/white"
+                android:textSize="22dp"
+                android:textStyle="bold"
+                android:background="@drawable/main_startbtn"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:layout_width="200dp"
+                android:layout_height="50dp"/>
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/text_logs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:textColor="@color/black"
-            android:textSize="10dp"
-            tools:ignore="MissingConstraints" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -492,7 +396,7 @@
         android:id="@+id/menu"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/black"
+        android:background="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -502,7 +406,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginLeft="25dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="#000000"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@mipmap/home"
@@ -510,15 +414,15 @@
 
         <ImageButton
             android:id="@+id/Report"
-            android:layout_width="47dp"
-            android:layout_height="50dp"
-            android:backgroundTint="@color/black"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:backgroundTint="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toRightOf="@id/Home"
             app:layout_constraintRight_toLeftOf="@id/Map"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/report1"
+            app:srcCompat="@drawable/ic_report"
             tools:ignore="MissingConstraints" />
 
 
@@ -529,7 +433,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="0dp"
             android:layout_marginBottom="-1dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="#000000"
             app:layout_constraintLeft_toRightOf="@id/Report"
             app:layout_constraintRight_toLeftOf="@id/Music"
             app:srcCompat="@mipmap/map"
@@ -543,10 +447,10 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="1dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="#000000"
             app:layout_constraintLeft_toRightOf="@id/Map"
             app:layout_constraintRight_toLeftOf="@id/Setting"
-            app:srcCompat="@mipmap/music"
+            app:srcCompat="@drawable/alarm"
             tools:ignore="MissingConstraints" />
 
         <ImageButton
@@ -556,13 +460,24 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="25dp"
             android:layout_marginBottom="-1dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="#000000"
             app:layout_constraintRight_toRightOf="parent"
             app:srcCompat="@mipmap/setting"
             tools:ignore="MissingConstraints" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/text_logs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:textColor="@color/black"
+        android:textSize="10dp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="19dp"
+        tools:layout_editor_absoluteY="161dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
