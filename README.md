@@ -68,12 +68,13 @@
 **Design**
 >  Adobe XD<br>
 >  Illustrator<br>
-  <br><br><br>
+>  
+<br><br>
   
   
 ## **How It works**
 ------------------
-  
+  ![그림8](https://user-images.githubusercontent.com/51114857/137433359-077b1c17-90a5-4fe8-afa1-37da4bc069fe.png)
   <br><br>
   
   
